@@ -145,6 +145,10 @@ See [Modify the app](#modify-the-app) for more information.
 
 ## Run the app
 
+In order to run the app, you must fork or clone it first.
+Run `git clone git@github.com:ahuggett26/recipes-webapp.git` in the location that you want to install
+and run the app from.
+
 ### Using startup script
 
 This is the easiest method of running the app. 
