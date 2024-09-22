@@ -13,9 +13,12 @@ import HomeButton from "./components/HomeButton";
 import DesktopFullDisplay from "./components/recipe/DesktopFullDisplay";
 import FullDisplay from "./components/recipe/FullDisplay";
 import MobileFullDisplay from "./components/recipe/MobileFullDisplay";
+import AdminPage from "./components/admin/AdminPage";
 import AdminButton from "./components/admin/AdminButton";
+import AdminSettings from "./components/admin/AdminSettings";
 
 const firebaseService = new FirebaseService();
+const adminSettings = new AdminSettings(firebaseService);
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,15 @@ const router = createBrowserRouter([
             <AdminButton />
             <NewRecipeButton />
             <Home firebase={firebaseService} />
+          </>
+        ),
+      },
+      {
+        path: "/admin",
+        element: (
+          <>
+            <HomeButton />
+            <AdminPage adminSettings={adminSettings} />
           </>
         ),
       },
