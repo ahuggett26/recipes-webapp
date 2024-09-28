@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <NewRecipePage firebase={firebaseService} />
+            <NewRecipePage firebase={firebaseService} adminSettings={adminSettings} />
           </>
         ),
       },
