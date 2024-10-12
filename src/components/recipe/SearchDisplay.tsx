@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Recipe from "../../model/Recipe";
 import { renderIngredient } from "../../model/Ingredient";
+import "./SearchDisplay.css";
 
 interface Properties {
   /** The recipe to display */
@@ -10,8 +11,8 @@ interface Properties {
 
 /**
  * A condensed display for a recipe, in a search view.
- * 
- * @param props 
+ *
+ * @param props
  * @returns A JSX component containing a recipe's in a condensed, search view.
  */
 export default function SearchDisplay(props: Properties) {
@@ -21,7 +22,12 @@ export default function SearchDisplay(props: Properties) {
       to={"/desktop-view?recipe=" + props.recipe.name.replaceAll(" ", "_")}
     >
       {props.recipe.imgSrc ? (
-        <img className="p-2 object-fit-cover align-self-center" src={props.recipe.imgSrc} width={120} height={120} />
+        <img
+          className="thumbnail p-2 object-fit-cover align-self-center"
+          src={props.recipe.imgSrc}
+          width={120}
+          height={120}
+        />
       ) : null}
       <div className="p-2 flex-grow-1">
         <h3>{props.recipe.name}</h3>
@@ -31,7 +37,7 @@ export default function SearchDisplay(props: Properties) {
           </ul>
         </div>
       </div>
-      <div className="align-self-center mx-1 flex-shrink-0">
+      <div className="timings align-self-center mx-1 flex-shrink-0">
         <p className="mb-0 mt-1">Prep time:</p>
         <p>{props.recipe.prepTimeMins} mins</p>
         <p className="m-0">Cook time:</p>
