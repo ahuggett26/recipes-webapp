@@ -4,6 +4,7 @@ import QRCode from "qrcode.react";
 import { internalIpV4 } from "internal-ip";
 import { renderIngredient } from "../../model/Ingredient";
 import "./FullDisplay.css";
+import { Link } from "react-router-dom";
 
 interface Properties {
   /** The recipe to display. */
@@ -12,13 +13,16 @@ interface Properties {
 
 /**
  * A full display for viewing a recipe on desktop.
- * 
+ *
  * @param props {@link Properties}
  * @returns A JSX component containing a recipe's full view.
  */
 export default function DesktopFullDisplay(props: Properties) {
   const [ipAddress, setIpAddress] = useState("");
   const [servings, setServings] = useState(props.recipe.servings);
+
+  const URLorigin = location.origin === "http://localhost:3000" ? `http://${ipAddress}:3000` : location.origin;
+  const mobileUrl = `${URLorigin}/mobile-view/?recipe=${props.recipe.name.replaceAll(" ", "_")}&servings=${servings}`;
 
   useEffect(() => {
     getIpAdress();
@@ -35,9 +39,9 @@ export default function DesktopFullDisplay(props: Properties) {
       <p>{props.recipe.description}</p>
       <div className="d-flex justify-content-center align-items-center gap-5 mb-2">
         <img src={props.recipe.imgSrc} className="object-fit-cover" width={240} height={240} />
-        <QRCode
-          value={`http://${ipAddress}:3000/mobile-view/?recipe=${props.recipe.name.replaceAll(" ", "_")}&servings=${servings}`}
-        />
+        <Link to={mobileUrl}>
+          <QRCode value={mobileUrl} />
+        </Link>
       </div>
       <div className="d-flex justify-content-center gap-5 mb-2">
         <span>
