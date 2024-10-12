@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import Recipe from "../model/Recipe";
 import { getFirestore, collection, getDocs, setDoc, doc, Firestore } from "firebase/firestore/lite";
 import { firebaseConfig } from "./FirebaseConfig";
+import SettingsDefinition from "../components/admin/SettingsDefinition";
 
 /**
  * Service for accessing the firebase database.
@@ -49,7 +50,7 @@ class FirebaseService {
 
   /**
    * Wait until all recipes have been loaded, with a maximum of 100 second wait.
-   * 
+   *
    * @returns A promise containing if the recipes have been loaded or not
    */
   async waitUntilRecipesLoaded() {
@@ -67,9 +68,9 @@ class FirebaseService {
 
   /**
    * Fetch recipes from a given name search input.
-   * 
+   *
    * The recipe name doesn't need to exactly match, it only needs to include the search.
-   * 
+   *
    * @param name The name to match
    * @returns All recipes containing the input name.
    */
@@ -86,12 +87,12 @@ class FirebaseService {
 
   /**
    * Fetch recipes from a given ingredient search input.
-   * 
+   *
    * The recipe ingredients don't need to exactly match, just include the search.
    * The recipes will be returned in order of ingredient search match.
    * For example all recipes matching ingredient 1 will be first, then all recipes
    * matching ingredient 2, then all recipes matching ingredient 3.
-   * 
+   *
    * @param ingredient1 The first ingredient search
    * @param ingredient2 The second ingredient search
    * @param ingredient3 The third ingredient search
@@ -119,7 +120,7 @@ class FirebaseService {
 
   /**
    * Fetch a random recipe from the database.
-   * 
+   *
    * @returns A single, random recipe
    */
   getRandomRecipe(): Recipe {
@@ -130,7 +131,7 @@ class FirebaseService {
 
   /**
    * Store a single recipe into the database.
-   * 
+   *
    * @param recipe The recipe to store.
    */
   async createRecipe(recipe: Recipe) {
@@ -138,6 +139,29 @@ class FirebaseService {
     try {
       await setDoc(doc(this.firestore, "recipes", recipe.name.replaceAll(" ", "_")), recipe);
       window.alert("Your recipe has been saved");
+    } catch (err) {
+      console.error(err);
+      window.alert("Something went wrong. Please check the console.");
+    }
+  }
+
+  /**
+   * Fetch all recipes in the database & load into the respective recipe objects.
+   */
+  async fetchAdminDoc() {
+    const adminDoc = await getDocs(collection(this.firestore, "admin"));
+    return adminDoc.docs[0];
+  }
+
+  /**
+   * Save settings into firebase database
+   * @param settings The definition of the settings to apply
+   */
+  async saveAdminSettings(settings: SettingsDefinition) {
+    console.log("Saving settings...");
+    try {
+      await setDoc(doc(this.firestore, "admin", "admin"), settings);
+      window.alert("Your settings have been saved");
     } catch (err) {
       console.error(err);
       window.alert("Something went wrong. Please check the console.");
