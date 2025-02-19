@@ -36,7 +36,6 @@ export default function DesktopFullDisplay(props: Properties) {
   return (
     <>
       <h1 className="pt-5">{props.recipe.name}</h1>
-      <p>{props.recipe.description}</p>
       <div className="d-flex justify-content-center align-items-center gap-5 mb-2">
         <img src={props.recipe.imgSrc} className="object-fit-cover" width={240} height={240} />
         <Link to={mobileUrl}>
@@ -71,8 +70,6 @@ export default function DesktopFullDisplay(props: Properties) {
           }}
         />
       </span>
-      <span className="px-3">{props.recipe.nutrition?.kcal ?? "- "}kcal</span>
-      <span className="px-3">{props.recipe.nutrition?.protein ?? "- "}g protein</span>
       <h3 className="mt-3">Ingredients:</h3>
       <ul className="px-4 centerList">
         {props.recipe.mainIngredients.map((ing) => renderIngredient(ing, servings / props.recipe.servings))}

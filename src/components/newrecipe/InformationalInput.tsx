@@ -3,7 +3,7 @@ import "./CookTimeInput.css";
 
 /**
  * Small inputs for informational elements, e.g. cook time & servings.
- * 
+ *
  * @returns A JSX element containing informational inputs.
  */
 function InformationalInput() {
@@ -26,8 +26,6 @@ function InformationalInput() {
           <th>Prep Time</th>
           <th>Cook Time</th>
           <th>Servings</th>
-          <th>Calories</th>
-          <th>Protein</th>
         </tr>
         <tr>
           <td className="px-2">
@@ -38,12 +36,6 @@ function InformationalInput() {
           </td>
           <td className="px-2">
             <input id="servingsInput" type="number" className="form-control numericalInput" />
-          </td>
-          <td className="px-2">
-            <input id="kcalInput" type="number" className="form-control numericalInput" />
-          </td>
-          <td className="px-2">
-            <input id="proteinInput" type="number" className="form-control numericalInput" />
           </td>
         </tr>
       </table>
