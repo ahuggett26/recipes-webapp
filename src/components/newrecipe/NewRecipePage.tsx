@@ -125,10 +125,12 @@ function NewRecipePage(props: Properties) {
         const name = (document.getElementById("ingredient-name-" + index) as HTMLInputElement).value;
         const amount = (document.getElementById("ingredient-amount-" + index) as HTMLInputElement).value;
         const measurement = (document.getElementById("ingredient-measurement-" + index) as HTMLInputElement).value;
+        const qualifier = (document.getElementById("ingredient-qualifier-" + index) as HTMLInputElement).value;
         return {
           name,
           amount: Number(amount),
           measurement: measurement as Measurement,
+          qualifier: qualifier === "" ? undefined : qualifier,
         };
       });
   }
