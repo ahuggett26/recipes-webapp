@@ -16,6 +16,7 @@ import MobileFullDisplay from "./components/recipe/MobileFullDisplay";
 import AdminPage from "./components/admin/AdminPage";
 import AdminButton from "./components/admin/AdminButton";
 import AdminSettings from "./components/admin/AdminSettings";
+import NewIngredientPage from "./components/newingredient/NewIngredientPage";
 
 const firebaseService = new FirebaseService();
 const adminSettings = new AdminSettings(firebaseService);
@@ -50,6 +51,15 @@ const router = createBrowserRouter([
           <>
             <HomeButton />
             <NewRecipePage firebase={firebaseService} adminSettings={adminSettings} />
+          </>
+        ),
+      },
+      {
+        path: "/create-ingredient",
+        element: (
+          <>
+            <HomeButton />
+            <NewIngredientPage firebase={firebaseService} adminSettings={adminSettings} />
           </>
         ),
       },

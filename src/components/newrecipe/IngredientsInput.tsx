@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./IngredientsInput.css";
 import IncrementListButton from "./IncrementListButton";
+import { measurementDatalist } from "../../model/Measurement";
 
 interface Properties {
   /** A number array of ingredients indexes. */
@@ -47,15 +48,7 @@ function IngredientInput(props: { index: number }) {
 
   return (
     <span className="d-flex gap-1">
-      <datalist id="valid-measurements">
-        <option value="g"></option>
-        <option value="ml"></option>
-        <option value="l"></option>
-        <option value="tsp"></option>
-        <option value="tbsp"></option>
-        <option value="pinch"></option>
-        <option value="units"></option>
-      </datalist>
+      {measurementDatalist()}
       <input id={createId("name")} className="form-control d-inline-block" />
       <input id={createId("qualifier")} className="form-control d-inline-block qualifierInput" />
       <input id={createId("amount")} className="form-control d-inline-block flex-grow-0 amountInput" type="number" />
