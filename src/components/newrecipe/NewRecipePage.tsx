@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import IngredientsInput from "./IngredientsInput";
 import InformationalInput from "./InformationalInput";
 import Recipe from "../../model/Recipe";
-import { Ingredient, Measurement } from "../../model/Ingredient";
+import { Ingredient } from "../../model/Ingredient";
 import StepsInput from "./StepsInput";
 import FirebaseService from "../../service/FirebaseService";
 import PasswordPopup from "../admin/PasswordPopup";
 import AdminSettings from "../admin/AdminSettings";
+import { Measurement } from "../../model/Measurement";
 
 interface Properties {
   /** The firebase service containing recipe data. */

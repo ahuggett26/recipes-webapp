@@ -1,7 +1,5 @@
 import React from "react";
-
-/** An accepted ingredient measurement. */
-export type Measurement = "g" | "ml" | "l" | "units" | "tsp" | "tbsp" | "pinch";
+import { Measurement } from "./Measurement";
 
 /** Individual ingredient information in a recipe. */
 export interface Ingredient {
