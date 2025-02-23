@@ -9,6 +9,8 @@ import Nutrition from "./Nutrition";
  * As a result, it is not impacted by serving sizes etc.
  */
 export default interface IngredientInfo {
+  /** Name of the ingredient */
+  name: string;
   /** Dietary information related to the ingredient */
   dietary: DietaryInfo;
   /** Nutritional information related to the ingredient */

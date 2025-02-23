@@ -3,6 +3,7 @@ import Recipe from "../model/Recipe";
 import { getFirestore, collection, getDocs, setDoc, doc, Firestore } from "firebase/firestore/lite";
 import { firebaseConfig } from "./FirebaseConfig";
 import SettingsDefinition from "../components/admin/SettingsDefinition";
+import IngredientInfo from "../model/IngredientInfo";
 
 /**
  * Service for accessing the firebase database.
@@ -139,6 +140,22 @@ class FirebaseService {
     try {
       await setDoc(doc(this.firestore, "recipes", recipe.name.replaceAll(" ", "_")), recipe);
       window.alert("Your recipe has been saved");
+    } catch (err) {
+      console.error(err);
+      window.alert("Something went wrong. Please check the console.");
+    }
+  }
+
+  /**
+   * Store a single ingredient into the database.
+   *
+   * @param ingredient The ingredient to store.
+   */
+  async createIngredient(ingredient: IngredientInfo) {
+    console.log("saving ingredient to firestore...");
+    try {
+      await setDoc(doc(this.firestore, "ingredients", ingredient.name.replaceAll(" ", "_")), ingredient);
+      window.alert(ingredient.name + " has been saved in the database");
     } catch (err) {
       console.error(err);
       window.alert("Something went wrong. Please check the console.");

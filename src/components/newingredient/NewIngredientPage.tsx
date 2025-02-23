@@ -3,6 +3,8 @@ import FirebaseService from "../../service/FirebaseService";
 import AdminSettings from "../admin/AdminSettings";
 import PasswordPopup from "../admin/PasswordPopup";
 import { measurementDatalist } from "../../model/Measurement";
+import IngredientInfo from "../../model/IngredientInfo";
+import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -82,8 +84,42 @@ function NewIngredientPage(props: Properties) {
         <label htmlFor="pescetarianCheckInput">Is Pescetarian</label>
         <input id="pescetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
       </div>
+      <button className="btn btn-primary d-block text-center mx-auto mt-2" onClick={() => onSubmit()}>
+        Submit
+      </button>
     </div>
   );
+
+  async function onSubmit() {
+    // TODO: password protect this
+    submitNewIngredient();
+  }
+
+  /**
+   * Submit a new recipe from the inputs into the firebase database.
+   */
+  function submitNewIngredient() {
+    const output: IngredientInfo = {
+      name: getFieldString("titleInput"),
+      dietary: {
+        vegan: isChecked("veganCheckInput"),
+        vegetarian: isChecked("vegetarianCheckInput"),
+        pescetarian: isChecked("pescetarianCheckInput"),
+      },
+      nutrition: {
+        kcal: getFieldInt("kcalInput"),
+        protein: getFieldFloat("proteinInput"),
+        fat: getFieldFloat("fatInput"),
+        sat_fat: getFieldFloat("satfatInput"),
+        fibre: getFieldFloat("fibreInput"),
+      },
+      reference: {
+        amount: getFieldInt("refAmount"),
+        measurement: getFieldMeasurement("refMeasurement"),
+      },
+    };
+    props.firebase.createIngredient(output);
+  }
 }
 
 export default NewIngredientPage;
