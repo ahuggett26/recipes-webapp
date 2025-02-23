@@ -43,7 +43,7 @@ function NewIngredientPage(props: Properties) {
         />
         <span className="col-4" />
       </div>
-      <div className="container ">
+      <div className="container">
         <div className="row my-1 align-items-center">
           <span className="col-5 text-end">Calories: </span>
           <input id="kcalInput" className="form-control col text-center" type="number" placeholder="0" />
@@ -69,6 +69,18 @@ function NewIngredientPage(props: Properties) {
           <input id="fibreInput" className="form-control col text-center" type="number" placeholder="0.0" />
           <span className="col-5 text-start">g</span>
         </div>
+      </div>
+      <div className="pt-4 pb-2">
+        <label htmlFor="veganCheckInput">Is Vegan</label>
+        <input id="veganCheckInput" className="form-check-input mx-3" type="checkbox" />
+      </div>
+      <div className="py-2">
+        <label htmlFor="vegetarianCheckInput">Is Vegetarian</label>
+        <input id="vegetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
+      </div>
+      <div className="py-2">
+        <label htmlFor="pescetarianCheckInput">Is Pescetarian</label>
+        <input id="pescetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
       </div>
     </div>
   );
