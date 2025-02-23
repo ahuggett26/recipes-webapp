@@ -4,7 +4,14 @@ import AdminSettings from "../admin/AdminSettings";
 import PasswordPopup from "../admin/PasswordPopup";
 import { measurementDatalist } from "../../model/Measurement";
 import IngredientInfo from "../../model/IngredientInfo";
-import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
+import {
+  clearAllFields,
+  getFieldFloat,
+  getFieldInt,
+  getFieldMeasurement,
+  getFieldString,
+  isChecked,
+} from "../../utils/FormUtils";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -86,6 +93,9 @@ function NewIngredientPage(props: Properties) {
       </div>
       <button className="btn btn-primary d-block text-center mx-auto mt-2" onClick={() => onSubmit()}>
         Submit
+      </button>
+      <button className="btn btn-outline-primary d-block text-center mx-auto mt-3" onClick={() => clearAllFields()}>
+        Clear
       </button>
     </div>
   );

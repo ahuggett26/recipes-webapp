@@ -1,5 +1,12 @@
 import { Measurement } from "../model/Measurement";
 
+export function clearAllFields() {
+  Array.from(document.getElementsByTagName("input")).forEach((input) => {
+    input.value = input.defaultValue;
+    input.checked = input.defaultChecked;
+  });
+}
+
 export function getFieldString(fieldId: string): string {
   return (document.getElementById(fieldId) as HTMLInputElement).value;
 }
