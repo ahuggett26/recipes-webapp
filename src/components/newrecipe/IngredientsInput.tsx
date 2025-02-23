@@ -11,7 +11,7 @@ interface Properties {
 
 /**
  * Inputs for setting ingredient information, e.g. amount, measurement and name.
- * 
+ *
  * @param props {@link Properties}
  * @returns A JSX element containing ingredient inputs.
  */
@@ -36,8 +36,8 @@ function IngredientsInput(props: Properties) {
 
 /**
  * Inputs for setting information for a single ingredient.
- * 
- * @param props 
+ *
+ * @param props
  * @returns A JSX element containing a single ingredient input
  */
 function IngredientInput(props: { index: number }) {
@@ -57,6 +57,7 @@ function IngredientInput(props: { index: number }) {
         <option value="units"></option>
       </datalist>
       <input id={createId("name")} className="form-control d-inline-block" />
+      <input id={createId("qualifier")} className="form-control d-inline-block qualifierInput" />
       <input id={createId("amount")} className="form-control d-inline-block flex-grow-0 amountInput" type="number" />
       <input
         id={createId("measurement")}

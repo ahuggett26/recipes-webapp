@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import IngredientsInput from "./IngredientsInput";
 import InformationalInput from "./InformationalInput";
 import Recipe from "../../model/Recipe";
-import { Ingredient, Measurement } from "../../model/Ingredient";
+import { Ingredient } from "../../model/Ingredient";
 import StepsInput from "./StepsInput";
 import FirebaseService from "../../service/FirebaseService";
 import PasswordPopup from "../admin/PasswordPopup";
 import AdminSettings from "../admin/AdminSettings";
+import { Measurement } from "../../model/Measurement";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -36,9 +37,7 @@ function NewRecipePage(props: Properties) {
       />
       <h1 className="pt-2">Create New Recipe</h1>
       <input id="titleInput" className="form-control m-1" placeholder="Title" />
-      <textarea id="descInput" className="form-control m-1" placeholder="Description" rows={1} />
       <div className="d-flex justify-content-evenly align-items-center">
-        <input type="url" id="recipeUrlInput" className="form-control m-1 w-auto" placeholder="Recipe URL" />
         <input
           type="url"
           id="imageInput"
@@ -78,19 +77,15 @@ function NewRecipePage(props: Properties) {
    */
   function submitNewRecipe() {
     const title = (document.getElementById("titleInput") as HTMLInputElement).value;
-    const description = (document.getElementById("descInput") as HTMLTextAreaElement).value;
     const prepTime = (document.getElementById("prepTimeInput") as HTMLInputElement).value;
     const cookTime = (document.getElementById("cookTimeInput") as HTMLInputElement).value;
     const servings = (document.getElementById("servingsInput") as HTMLInputElement).value;
-    const recipeUrl = (document.getElementById("recipeUrlInput") as HTMLInputElement).value;
     const mainIngredients = getIngredients(true);
     const secondaryIngredients = getIngredients(false);
 
     const output: Recipe = {
       name: title,
-      description,
       imgSrc: imgUrl,
-      link: recipeUrl,
       prepTimeMins: parseTimeMins(prepTime),
       cookTimeMins: parseTimeMins(cookTime),
       servings: Number.parseInt(servings),
@@ -131,10 +126,12 @@ function NewRecipePage(props: Properties) {
         const name = (document.getElementById("ingredient-name-" + index) as HTMLInputElement).value;
         const amount = (document.getElementById("ingredient-amount-" + index) as HTMLInputElement).value;
         const measurement = (document.getElementById("ingredient-measurement-" + index) as HTMLInputElement).value;
+        const qualifier = (document.getElementById("ingredient-qualifier-" + index) as HTMLInputElement).value;
         return {
           name,
           amount: Number(amount),
           measurement: measurement as Measurement,
+          qualifier: qualifier === "" ? undefined : qualifier,
         };
       });
   }
