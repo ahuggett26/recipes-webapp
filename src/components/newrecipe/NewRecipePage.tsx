@@ -7,7 +7,7 @@ import StepsInput from "./StepsInput";
 import FirebaseService from "../../service/FirebaseService";
 import PasswordPopup from "../admin/PasswordPopup";
 import AdminSettings from "../admin/AdminSettings";
-import { Measurement } from "../../model/Measurement";
+import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -76,22 +76,18 @@ function NewRecipePage(props: Properties) {
    * Submit a new recipe from the inputs into the firebase database.
    */
   function submitNewRecipe() {
-    const title = (document.getElementById("titleInput") as HTMLInputElement).value;
-    const prepTime = (document.getElementById("prepTimeInput") as HTMLInputElement).value;
-    const cookTime = (document.getElementById("cookTimeInput") as HTMLInputElement).value;
-    const servings = (document.getElementById("servingsInput") as HTMLInputElement).value;
     const mainIngredients = getIngredients(true);
     const secondaryIngredients = getIngredients(false);
 
     const output: Recipe = {
-      name: title,
+      name: getFieldString("titleInput"),
       imgSrc: imgUrl,
-      prepTimeMins: parseTimeMins(prepTime),
-      cookTimeMins: parseTimeMins(cookTime),
-      servings: Number.parseInt(servings),
+      prepTimeMins: parseTimeMins(getFieldString("prepTimeInput")),
+      cookTimeMins: parseTimeMins(getFieldString("cookTimeInput")),
+      servings: getFieldInt("servingsInput"),
       mainIngredients,
       secondaryIngredients,
-      steps: steps.map((_, index) => (document.getElementById("steps-input-" + index) as HTMLInputElement).value),
+      steps: steps.map((_, index) => getFieldString("steps-input-" + index)),
     };
     props.firebase.createRecipe(output);
   }
@@ -118,19 +114,13 @@ function NewRecipePage(props: Properties) {
    */
   function getIngredients(required: boolean): Ingredient[] {
     return ingredients
-      .filter(
-        (_, index) =>
-          (document.getElementById("ingredient-required-" + index) as HTMLInputElement).checked === required,
-      )
+      .filter((_, index) => isChecked("ingredient-required-" + index) === required)
       .map((_, index) => {
-        const name = (document.getElementById("ingredient-name-" + index) as HTMLInputElement).value;
-        const amount = (document.getElementById("ingredient-amount-" + index) as HTMLInputElement).value;
-        const measurement = (document.getElementById("ingredient-measurement-" + index) as HTMLInputElement).value;
-        const qualifier = (document.getElementById("ingredient-qualifier-" + index) as HTMLInputElement).value;
+        const qualifier = getFieldString("ingredient-qualifier-" + index);
         return {
-          name,
-          amount: Number(amount),
-          measurement: measurement as Measurement,
+          name: getFieldString("ingredient-name-" + index),
+          amount: getFieldFloat("ingredient-amount-" + index),
+          measurement: getFieldMeasurement("ingredient-measurement-" + index),
           qualifier: qualifier === "" ? undefined : qualifier,
         };
       });
