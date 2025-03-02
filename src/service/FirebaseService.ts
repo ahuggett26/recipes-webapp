@@ -13,17 +13,20 @@ class FirebaseService {
   firestore: Firestore;
   /** All recipes in the database, organised in a map keyed by the recipe name. */
   recipesByName: Map<string, Recipe> = new Map();
-  /** All recipes in the database, keyed by ingredients, mapped to recipes containing those ingredients. */
+  /**
+   * All recipes in the database, keyed by ingredients, mapped to recipes containing those ingredients.
+   * If the ingredient is not in the ingredient database, the recipe will not be stored here.
+   */
   recipesByIngredients: Map<string, Recipe[]> = new Map();
   /** An array of all the ingreients across all recipes. */
-  allIngredients: string[] = [];
+  allIngredients: IngredientInfo[] = [];
   /** Boolean variable representing if the database data has been loaded in. */
   loaded = false;
 
   constructor() {
     const app = initializeApp(firebaseConfig);
     this.firestore = getFirestore(app);
-    this.fetchAllRecipes();
+    this.fetchAllIngredients().then(() => this.fetchAllRecipes());
     return this;
   }
 
@@ -37,16 +40,22 @@ class FirebaseService {
       this.recipesByName.set(recipe.name.toLowerCase(), recipe);
       recipe.mainIngredients.forEach((ing) => {
         const ingName = ing.name.toLowerCase();
-        if (!this.allIngredients.includes(ingName)) {
-          this.allIngredients.push(ingName);
-          this.recipesByIngredients.set(ingName, [recipe]);
-          return;
+        if (this.allIngredients.filter((i) => i.name.toLowerCase() === ingName).length > 0) {
+          const matches = this.recipesByIngredients.get(ingName);
+          this.recipesByIngredients.set(ingName, [...(matches ?? []), recipe]);
         }
-        const matches = this.recipesByIngredients.get(ingName);
-        this.recipesByIngredients.set(ingName, [...(matches ?? []), recipe]);
       });
     });
     this.loaded = true;
+  }
+
+  /**
+   * Fetch all ingrediets in the database and load them into
+   */
+  async fetchAllIngredients() {
+    const query = await getDocs(collection(this.firestore, "ingredients"));
+    query.forEach((ing) => this.allIngredients.push(ing.data() as IngredientInfo));
+    this.allIngredients.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /**
@@ -65,6 +74,15 @@ class FirebaseService {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Fetch all ingredient from ingredient storage.
+   *
+   * @returns All recipes containing the input name.
+   */
+  getAllIngredients() {
+    return this.allIngredients;
   }
 
   /**
@@ -111,9 +129,9 @@ class FirebaseService {
         continue;
       }
       const ingName = i.toLowerCase();
-      const ingredients = this.allIngredients.filter((allIng) => allIng.includes(ingName));
+      const ingredients = this.allIngredients.filter((allIng) => allIng.name.toLowerCase().includes(ingName));
       ingredients
-        .flatMap((ing) => this.recipesByIngredients.get(ing))
+        .flatMap((ing) => this.recipesByIngredients.get(ing.name.toLowerCase()))
         .forEach((recipe) => (recipe ? recipesSet.add(recipe) : ""));
     }
     return Array.from(recipesSet);

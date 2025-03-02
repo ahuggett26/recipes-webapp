@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FirebaseService from "../../service/FirebaseService";
 import IngredientInfo from "../../model/IngredientInfo";
 import SearchInput from "../search/SearchInput";
@@ -17,6 +17,12 @@ interface Properties {
  */
 function IngredientList(props: Properties) {
   const [nameFilter, setNameFilter] = useState("");
+  const [allIngredients, setAllIngredients] = useState<IngredientInfo[]>([]);
+
+  useEffect(() => {
+    setAllIngredients(props.firebase.getAllIngredients());
+  });
+
   return (
     <div className="w-75 min-h-75 mh-100">
       <h1 className="py-2">All Ingredients</h1>
@@ -49,9 +55,8 @@ function IngredientList(props: Properties) {
             <b>Dietary</b>
           </span>
         </div>
-        {mockGetIngredientList()
+        {allIngredients
           .filter((ingredient) => ingredient.name.toLowerCase().includes(nameFilter.toLowerCase()))
-          .sort((a, b) => a.name.localeCompare(b.name))
           .map((ingredient) => (
             <div className="row" key={ingredient.name}>
               <span className="col">{ingredient.name}</span>
@@ -74,68 +79,6 @@ function IngredientList(props: Properties) {
       </div>
     </div>
   );
-}
-
-function mockGetIngredientList(): IngredientInfo[] {
-  return [
-    {
-      name: "Cauliflower",
-      dietary: {
-        vegan: true,
-        vegetarian: true,
-        pescetarian: true,
-      },
-      nutrition: {
-        kcal: 34,
-        fat: 0.5,
-        fibre: 1.8,
-        protein: 2.5,
-        sat_fat: 0.2,
-      },
-      reference: {
-        amount: 100,
-        measurement: "g",
-      },
-    },
-    {
-      name: "Green pesto",
-      dietary: {
-        vegan: false,
-        vegetarian: true,
-        pescetarian: true,
-      },
-      nutrition: {
-        kcal: 312,
-        fat: 28.4,
-        fibre: 3,
-        protein: 4.3,
-        sat_fat: 4,
-      },
-      reference: {
-        amount: 100,
-        measurement: "g",
-      },
-    },
-    {
-      name: "Chicken stock",
-      dietary: {
-        vegan: false,
-        vegetarian: false,
-        pescetarian: false,
-      },
-      nutrition: {
-        kcal: 8,
-        fat: 0.5,
-        fibre: 0.5,
-        protein: 1.4,
-        sat_fat: 0.1,
-      },
-      reference: {
-        amount: 100,
-        measurement: "ml",
-      },
-    },
-  ];
 }
 
 export default IngredientList;
