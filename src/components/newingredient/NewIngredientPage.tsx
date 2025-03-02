@@ -12,6 +12,7 @@ import {
   getFieldString,
   isChecked,
 } from "../../utils/FormUtils";
+import { Link } from "react-router-dom";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -38,6 +39,7 @@ function NewIngredientPage(props: Properties) {
         onSuccess={() => {}}
       />
       <h1 className="pt-2">Add New Ingredient</h1>
+      <Link to="../ingredient-list">See all current ingredients</Link>
       <input id="titleInput" className="form-control m-4" placeholder="Name" />
       <div className="row my-3 align-items-center">
         {measurementDatalist()}

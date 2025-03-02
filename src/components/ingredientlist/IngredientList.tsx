@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FirebaseService from "../../service/FirebaseService";
 import IngredientInfo from "../../model/IngredientInfo";
 import SearchInput from "../search/SearchInput";
+import { Link } from "react-router-dom";
 
 interface Properties {
   /** The firebase service containing recipe & ingredient data. */
@@ -20,6 +21,7 @@ function IngredientList(props: Properties) {
     <div className="w-75 min-h-75 mh-100">
       <h1 className="py-2">All Ingredients</h1>
       <SearchInput disabled={false} placeholder="Find ingredient" width="100" setSearch={setNameFilter} />
+      <Link to="../create-ingredient">Add new ingredient</Link>
       <div className="container pt-4">
         <div className="row">
           <span className="col">
