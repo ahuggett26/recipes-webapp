@@ -16,6 +16,7 @@ import MobileFullDisplay from "./components/recipe/MobileFullDisplay";
 import AdminPage from "./components/admin/AdminPage";
 import AdminButton from "./components/admin/AdminButton";
 import AdminSettings from "./components/admin/AdminSettings";
+import DebugFileParse from "./components/parser/DebugFileParser";
 
 const firebaseService = new FirebaseService();
 const adminSettings = new AdminSettings(firebaseService);
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
             <NewRecipePage firebase={firebaseService} adminSettings={adminSettings} />
           </>
         ),
+      },
+      {
+        path: "/create-scrape",
+        element: <DebugFileParse />,
       },
       {
         path: "/desktop-view",
