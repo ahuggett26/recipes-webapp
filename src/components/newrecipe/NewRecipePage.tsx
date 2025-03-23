@@ -8,6 +8,7 @@ import FirebaseService from "../../service/FirebaseService";
 import PasswordPopup from "../admin/PasswordPopup";
 import AdminSettings from "../admin/AdminSettings";
 import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
+import { addRecipe } from "../../api/RecipeSlice";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -90,6 +91,7 @@ function NewRecipePage(props: Properties) {
       steps: steps.map((_, index) => getFieldString("steps-input-" + index)),
     };
     props.firebase.createRecipe(output);
+    addRecipe(output);
   }
 
   /**

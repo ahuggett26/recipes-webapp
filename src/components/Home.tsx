@@ -1,35 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NameSearch from "./search/NameSearch";
 import IngredientSearch from "./search/IngredientSearch";
 import { useNavigate } from "react-router-dom";
-import FirebaseService from "../service/FirebaseService";
-
-interface Properties {
-  /** The firebase database. */
-  firebase: FirebaseService;
-}
+import { useSelector } from "react-redux";
+import { selectRandomRecipe, selectRecipeReadiness } from "../api/RecipeSlice";
 
 /**
  * The home page, to display on first open.
- * 
+ *
  * Contains the name search, ingredient search & random recipe.
- * 
+ *
  * @param props {@link Properties}
  * @returns A JSX component of the home page.
  */
-function Home(props: Properties) {
+function Home() {
   const navigate = useNavigate();
-  const [recipesReady, setRecipesReady] = useState(false);
+  const recipesReadiness = useSelector(selectRecipeReadiness);
+  const recipesReady = recipesReadiness === "success";
   const [searchingIngredients, setSearchingIngredients] = useState(false);
   const [searchTerm, setSearch] = useState("");
   const centralView = searchTerm === "" && !searchingIngredients ? "w-50 h-50" : "w-75 h-75";
-  useEffect(() => {
-    props.firebase.waitUntilRecipesLoaded().then((loaded) => {
-      if (loaded) {
-        setRecipesReady(true);
-      }
-    });
-  }, [setRecipesReady]);
+  // const randomRecipe = useSelector(selectRandomRecipe);
+
   return (
     <div className={centralView}>
       <h1>Recipes</h1>
@@ -40,16 +32,10 @@ function Home(props: Properties) {
         <span className="spinner-border spinner-border-sm ms-2" role="status" />
       </div>
       {!searchingIngredients && (
-        <NameSearch
-          firebase={props.firebase}
-          recipesReady={recipesReady}
-          nameSearch={searchTerm}
-          setSearch={setSearch}
-        />
+        <NameSearch recipesReady={recipesReady} nameSearch={searchTerm} setSearch={setSearch} />
       )}
       {searchingIngredients && (
         <IngredientSearch
-          firebase={props.firebase}
           recipesReady={recipesReady}
           search={searchTerm}
           setSearch={(ing) => setSearch(ing.join(","))}
@@ -74,9 +60,8 @@ function Home(props: Properties) {
                 type="button"
                 className="btn"
                 disabled={!recipesReady}
-                onClick={() =>
-                  navigate("/desktop-view?recipe=" + props.firebase.getRandomRecipe().name.replaceAll(" ", "_"))
-                }
+                // onClick={() => navigate("/desktop-view?recipe=" + randomRecipe?.name.replaceAll(" ", "_"))}
+                onClick={() => navigate("/desktop-view?recipe=not_real_recipe")}
               >
                 <i className="bi bi-shuffle pe-2"></i>
                 Pick a random recipe

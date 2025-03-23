@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Recipe from "../../model/Recipe";
+import React from "react";
 import SearchDisplay from "../recipe/SearchDisplay";
 import NoResultsFound from "./NoResultsFound";
 import SearchInput from "./SearchInput";
-import FirebaseService from "../../service/FirebaseService";
+import { useSelector } from "react-redux";
+import { RecipeState, selectRecipesByNameIncludes } from "../../api/RecipeSlice";
 
 interface Props {
-  /** The firebase database */
-  firebase: FirebaseService;
   /** True if the database recipes have been loaded & are ready to search. */
   recipesReady: boolean;
   /** The current name being searched. */
@@ -18,17 +16,12 @@ interface Props {
 
 /**
  * A search page for searching via name
- * 
+ *
  * @param props {@link Properties}
  * @returns A JSX component for displaying a recipe search by name
  */
 function NameSearch(props: Props) {
-  const [recipeResults, setRecipeResults] = useState<Recipe[]>([]);
-  useEffect(() => {
-    if (props.nameSearch) {
-      setRecipeResults(props.firebase.getRecipesByName(props.nameSearch));
-    }
-  }, [props.nameSearch]);
+  const recipeResults = useSelector((state: RecipeState) => selectRecipesByNameIncludes(state, props.nameSearch));
 
   return (
     <>

@@ -18,6 +18,8 @@ import AdminButton from "./components/admin/AdminButton";
 import AdminSettings from "./components/admin/AdminSettings";
 import NewIngredientPage from "./components/newingredient/NewIngredientPage";
 import IngredientList from "./components/ingredientlist/IngredientList";
+import { Provider as StoreProvider } from "react-redux";
+import { store } from "./api/Store";
 
 const firebaseService = new FirebaseService();
 const adminSettings = new AdminSettings(firebaseService);
@@ -25,7 +27,7 @@ const adminSettings = new AdminSettings(firebaseService);
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <Root firebaseService={firebaseService} />,
     children: [
       {
         path: "/",
@@ -33,7 +35,7 @@ const router = createBrowserRouter([
           <>
             <AdminButton />
             <NewRecipeButton />
-            <Home firebase={firebaseService} />
+            <Home />
           </>
         ),
       },
@@ -69,7 +71,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <IngredientList firebase={firebaseService} />
+            <IngredientList />
           </>
         ),
       },
@@ -78,13 +80,13 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <FullDisplay firebase={firebaseService} child={(recipe) => <DesktopFullDisplay recipe={recipe} />} />
+            <FullDisplay child={(recipe) => <DesktopFullDisplay recipe={recipe} />} />
           </>
         ),
       },
       {
         path: "/mobile-view",
-        element: <FullDisplay firebase={firebaseService} child={(recipe) => <MobileFullDisplay recipe={recipe} />} />,
+        element: <FullDisplay child={(recipe) => <MobileFullDisplay recipe={recipe} />} />,
       },
     ],
   },
@@ -93,7 +95,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <StoreProvider store={store}>
+      <RouterProvider router={router} />
+    </StoreProvider>
   </React.StrictMode>,
 );
 
