@@ -1,6 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { recipeReducer } from "./RecipeSlice";
-import { ingredientReducer } from "./IngredientSlice";
+import { configureStore, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { recipeReducer, RecipeState } from "./RecipeSlice";
+import { ingredientReducer, IngredientState } from "./IngredientSlice";
 
 /**
  * Redux global state store object
@@ -11,3 +11,11 @@ export const store = configureStore({
     ingredients: ingredientReducer(),
   },
 });
+
+export interface AppState {
+  recipes: RecipeState;
+  ingredients: IngredientState;
+}
+
+export type RecipeDispatch = ThunkDispatch<RecipeState, undefined, UnknownAction>;
+export type IngredientDispatch = ThunkDispatch<IngredientState, undefined, UnknownAction>;

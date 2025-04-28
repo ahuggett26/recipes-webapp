@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import IngredientInfo from "../model/IngredientInfo";
 import FirebaseService from "../service/FirebaseService";
+import { AppState } from "./Store";
 
 // Define the TS type for the recipe slice's state
-interface IngredientState {
+export interface IngredientState {
   // All ingredients. Undefined = not loaded, null = error loading.
   ingredients: IngredientInfo[] | undefined | null;
 }
@@ -13,8 +14,8 @@ interface IngredientState {
  *
  * @returns A list of all ingredients. Empty if not yet loaded.
  */
-export const selectIngredients = (state: IngredientState) => {
-  return state.ingredients ?? [];
+export const selectIngredients = (state: AppState) => {
+  return state.ingredients.ingredients ?? [];
 };
 
 /** Redux reducer function for initialising global state storage */

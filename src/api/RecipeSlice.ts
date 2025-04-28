@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Recipe from "../model/Recipe";
 import FirebaseService from "../service/FirebaseService";
+import { AppState } from "./Store";
 
 // Define the TS type for the recipe slice's state
 export interface RecipeState {
@@ -15,8 +16,8 @@ export interface RecipeState {
  *
  * @returns A single, random recipe
  */
-export const selectRecipeReadiness = (state: RecipeState) => {
-  return state.recipeReadiness;
+export const selectRecipeReadiness = (state: AppState) => {
+  return state.recipes.recipeReadiness;
 };
 
 /**
@@ -24,8 +25,8 @@ export const selectRecipeReadiness = (state: RecipeState) => {
  *
  * @returns A single, random recipe
  */
-export const selectRandomRecipe = (state: RecipeState) => {
-  const recipes = Array.from(state.recipes.values());
+export const selectRandomRecipe = (state: AppState) => {
+  const recipes = Array.from(state.recipes.recipes.values());
   const randomIndex = Math.floor(Math.random() * recipes.length);
   return recipes[randomIndex];
 };
@@ -36,8 +37,8 @@ export const selectRandomRecipe = (state: RecipeState) => {
  * @param name The name of the recipe
  * @returns The matching recipe object
  */
-export const selectRecipeByName = (state: RecipeState, name: string) => {
-  return state.recipes.get(name);
+export const selectRecipeByName = (state: AppState, name: string) => {
+  return state.recipes.recipes.get(name);
 };
 
 /**
@@ -48,11 +49,10 @@ export const selectRecipeByName = (state: RecipeState, name: string) => {
  * @param name The name to match
  * @returns All recipes containing the input name.
  */
-export const selectRecipesByNameIncludes = (state: RecipeState, nameIncludes: string) => {
+export const selectRecipesByNameIncludes = (state: AppState, nameIncludes: string) => {
   const query = nameIncludes.toLowerCase();
   const recipes: Recipe[] = [];
-  console.log("state", state);
-  state.recipes.forEach((recipe, name) => {
+  state.recipes.recipes.forEach((recipe, name) => {
     if (name.includes(query)) {
       recipes.push(recipe);
     }

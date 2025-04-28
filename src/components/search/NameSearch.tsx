@@ -3,7 +3,8 @@ import SearchDisplay from "../recipe/SearchDisplay";
 import NoResultsFound from "./NoResultsFound";
 import SearchInput from "./SearchInput";
 import { useSelector } from "react-redux";
-import { RecipeState, selectRecipesByNameIncludes } from "../../api/RecipeSlice";
+import { selectRecipesByNameIncludes } from "../../api/RecipeSlice";
+import { AppState } from "../../api/Store";
 
 interface Props {
   /** True if the database recipes have been loaded & are ready to search. */
@@ -21,7 +22,7 @@ interface Props {
  * @returns A JSX component for displaying a recipe search by name
  */
 function NameSearch(props: Props) {
-  const recipeResults = useSelector((state: RecipeState) => selectRecipesByNameIncludes(state, props.nameSearch));
+  const recipeResults = useSelector((state: AppState) => selectRecipesByNameIncludes(state, props.nameSearch));
 
   return (
     <>

@@ -2,7 +2,8 @@ import React from "react";
 import { useSearchParams } from "react-router-dom";
 import Recipe from "../../model/Recipe";
 import { useSelector } from "react-redux";
-import { RecipeState, selectRecipeByName, selectRecipeReadiness } from "../../api/RecipeSlice";
+import { selectRecipeByName, selectRecipeReadiness } from "../../api/RecipeSlice";
+import { AppState } from "../../api/Store";
 
 interface Properties {
   /** The child implementation for rendering the recipe.  */
@@ -22,7 +23,7 @@ export default function FullDisplay(props: Properties) {
   const [searchParams] = useSearchParams();
   const recipeName = searchParams.get("recipe")?.replaceAll("_", " ");
   const recipeReadiness = useSelector(selectRecipeReadiness);
-  const recipe = useSelector((state: RecipeState) => selectRecipeByName(state, recipeName ?? ""));
+  const recipe = useSelector((state: AppState) => selectRecipeByName(state, recipeName ?? ""));
 
   if (recipeReadiness === "pending") {
     return <div>Loading recipe: {recipeName}...</div>;

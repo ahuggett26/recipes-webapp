@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { fetchRecipes } from "../api/RecipeSlice";
 import { fetchIngredients } from "../api/IngredientSlice";
 import FirebaseService from "../service/FirebaseService";
+import { useDispatch } from "react-redux";
+import { IngredientDispatch, RecipeDispatch } from "../api/Store";
 
 interface Properties {
   firebaseService: FirebaseService;
@@ -17,10 +19,12 @@ interface Properties {
  * @returns A JSX component of the root page.
  */
 function Root(props: Properties) {
+  const dispatch = useDispatch();
   useEffect(() => {
     // Fetch the initial data from DB to load into state on first render
-    fetchRecipes(props.firebaseService);
-    fetchIngredients(props.firebaseService);
+    console.log("Fetching recipes from Root");
+    (dispatch as RecipeDispatch)(fetchRecipes(props.firebaseService));
+    (dispatch as IngredientDispatch)(fetchIngredients(props.firebaseService));
   });
 
   return (
