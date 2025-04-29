@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import Recipe from "../../model/Recipe";
+import React from "react";
 import SearchDisplay from "../recipe/SearchDisplay";
 import NoResultsFound from "./NoResultsFound";
 import SearchInput from "./SearchInput";
+import { useSelector } from "react-redux";
+import { AppState } from "../../api/Store";
+import { selectRecipesByIngredients } from "../../api/RecipeSlice";
 
 interface Properties {
   /** True if the database recipes have been loaded & are ready to search. */
@@ -20,16 +22,14 @@ interface Properties {
  * @returns A JSX component for displaying a recipe search by ingredient
  */
 function IngredientSearch(props: Properties) {
-  const [recipeResults, setRecipeResults] = useState<Recipe[]>([]);
   const ingredients = props.search === "" ? ["", "", ""] : props.search.split(",");
   const ingredient1 = ingredients[0];
   const ingredient2 = ingredients[1];
   const ingredient3 = ingredients[2];
 
-  // TODO: reimplement searchRecipesByIngredient
-  // const recipeResults =
-  //   useSelector(
-  //     (state: RecipeState) => selectRecipesByIngredient(state, ingredient1, ingredient2, ingredient3));
+  const recipeResults = useSelector((state: AppState) =>
+    selectRecipesByIngredients(state, ingredient1, ingredient2, ingredient3),
+  );
 
   const emptySearch = ingredient1 === "" && ingredient2 === "" && ingredient3 === "";
 

@@ -59,6 +59,39 @@ export const selectRecipesByNameIncludes = (state: AppState, nameIncludes: strin
   return state.recipes.recipes.filter((recipe) => recipe.name.includes(query));
 };
 
+/**
+ * Fetch recipes by its ingredients
+ *
+ * @param ingredient1 The first ingredient search (must be provided)
+ * @param ingredient2 The secon ingredient search (optional)
+ * @param ingredient3 The third ingredient search (optional)
+ * @returns The list of recipes containing one of the given ingredients
+ */
+export const selectRecipesByIngredients = (
+  state: AppState,
+  ingredient1: string,
+  ingredient2?: string | undefined,
+  ingredient3?: string | undefined,
+) => {
+  const recipesSet = new Set<Recipe>();
+  const filterIngs = [ingredient1, ingredient2, ingredient3];
+  for (const i of filterIngs) {
+    if (!i || i === "") {
+      continue;
+    }
+    const ingName = i.toLowerCase();
+    state.recipes.recipes
+      .filter((r) => {
+        const foundIng = r.mainIngredients
+          .concat(r.secondaryIngredients ?? [])
+          .find((ing) => ing.name.toLowerCase().includes(ingName));
+        return foundIng != undefined;
+      })
+      .forEach((recipe) => recipesSet.add(recipe));
+  }
+  return Array.from(recipesSet);
+};
+
 /** Redux reducer function for initialising global state storage */
 export const addRecipe = (recipe: Recipe) => recipeSlice.actions.addRecipe(recipe);
 

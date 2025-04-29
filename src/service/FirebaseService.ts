@@ -32,40 +32,6 @@ class FirebaseService {
   }
 
   /**
-   * Fetch recipes from a given ingredient search input.
-   *
-   * The recipe ingredients don't need to exactly match, just include the search.
-   * The recipes will be returned in order of ingredient search match.
-   * For example all recipes matching ingredient 1 will be first, then all recipes
-   * matching ingredient 2, then all recipes matching ingredient 3.
-   *
-   * @param ingredient1 The first ingredient search
-   * @param ingredient2 The second ingredient search
-   * @param ingredient3 The third ingredient search
-   * @returns All recipes containing the input ingredients
-   */
-  // TODO: reimplement 'getRecipesByIngredient'
-  // getRecipesByIngredient(
-  //   ingredient1: string,
-  //   ingredient2?: string | undefined,
-  //   ingredient3?: string | undefined,
-  // ): Recipe[] {
-  //   const recipesSet = new Set<Recipe>();
-  //   const filterIngs = [ingredient1, ingredient2, ingredient3];
-  //   for (const i of filterIngs) {
-  //     if (!i || i === "") {
-  //       continue;
-  //     }
-  //     const ingName = i.toLowerCase();
-  //     const ingredients = this.allIngredients.filter((allIng) => allIng.name.toLowerCase().includes(ingName));
-  //     ingredients
-  //       .flatMap((ing) => this.recipesByIngredients.get(ing.name.toLowerCase()))
-  //       .forEach((recipe) => (recipe ? recipesSet.add(recipe) : ""));
-  //   }
-  //   return Array.from(recipesSet);
-  // }
-
-  /**
    * Store a single recipe into the database.
    *
    * @param recipe The recipe to store.
