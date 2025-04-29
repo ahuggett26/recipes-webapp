@@ -21,13 +21,19 @@ export const selectRecipeReadiness = (state: AppState) => {
 };
 
 /**
- * Fetch a random recipe from the database.
- *
- * @returns A single, random recipe
+ * @returns The total amount of recipes in the database
  */
-export const selectRandomRecipe = (state: AppState) => {
-  const randomIndex = Math.floor(Math.random() * state.recipes.recipes.length);
-  return state.recipes.recipes[randomIndex];
+export const selectRecipeCount = (state: AppState) => {
+  return state.recipes.recipes.length;
+};
+
+/**
+ * Fetch a recipe from the database by its index.
+ *
+ * @returns The recipe at the given index
+ */
+export const selectRecipeByIndex = (state: AppState, index: number) => {
+  return state.recipes.recipes[index];
 };
 
 /**

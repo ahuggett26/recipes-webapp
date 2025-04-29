@@ -3,7 +3,8 @@ import NameSearch from "./search/NameSearch";
 import IngredientSearch from "./search/IngredientSearch";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectRecipeReadiness } from "../api/RecipeSlice";
+import { selectRecipeByIndex, selectRecipeCount, selectRecipeReadiness } from "../api/RecipeSlice";
+import { AppState } from "../api/Store";
 
 /**
  * The home page, to display on first open.
@@ -20,7 +21,10 @@ function Home() {
   const [searchingIngredients, setSearchingIngredients] = useState(false);
   const [searchTerm, setSearch] = useState("");
   const centralView = searchTerm === "" && !searchingIngredients ? "w-50 h-50" : "w-75 h-75";
-  // const randomRecipe = useSelector(selectRandomRecipe);
+
+  const recipeCount = useSelector(selectRecipeCount);
+  const randomIndex = Math.floor(Math.random() * recipeCount);
+  const randomRecipe = useSelector((state: AppState) => selectRecipeByIndex(state, randomIndex));
 
   return (
     <div className={centralView}>
@@ -60,8 +64,9 @@ function Home() {
                 type="button"
                 className="btn"
                 disabled={!recipesReady}
-                // onClick={() => navigate("/desktop-view?recipe=" + randomRecipe?.name.replaceAll(" ", "_"))}
-                onClick={() => navigate("/desktop-view?recipe=not_real_recipe")}
+                onClick={() => {
+                  navigate("/desktop-view?recipe=" + randomRecipe?.name.replaceAll(" ", "_"));
+                }}
               >
                 <i className="bi bi-shuffle pe-2"></i>
                 Pick a random recipe
