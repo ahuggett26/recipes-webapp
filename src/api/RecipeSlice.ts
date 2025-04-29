@@ -6,7 +6,7 @@ import { AppState } from "./Store";
 // Define the TS type for the recipe slice's state
 export interface RecipeState {
   // All recipes.
-  recipes: Map<string, Recipe>;
+  recipes: Recipe[];
   // Determines if the recipes have been loaded yet, and if it was loaded succesfully.
   recipeReadiness: "pending" | "error" | "success";
 }
@@ -26,9 +26,8 @@ export const selectRecipeReadiness = (state: AppState) => {
  * @returns A single, random recipe
  */
 export const selectRandomRecipe = (state: AppState) => {
-  const recipes = Array.from(state.recipes.recipes.values());
-  const randomIndex = Math.floor(Math.random() * recipes.length);
-  return recipes[randomIndex];
+  const randomIndex = Math.floor(Math.random() * state.recipes.recipes.length);
+  return state.recipes.recipes[randomIndex];
 };
 
 /**
@@ -38,7 +37,7 @@ export const selectRandomRecipe = (state: AppState) => {
  * @returns The matching recipe object
  */
 export const selectRecipeByName = (state: AppState, name: string) => {
-  return state.recipes.recipes.get(name);
+  return state.recipes.recipes.find((recipe) => recipe.name === name);
 };
 
 /**
@@ -51,13 +50,7 @@ export const selectRecipeByName = (state: AppState, name: string) => {
  */
 export const selectRecipesByNameIncludes = (state: AppState, nameIncludes: string) => {
   const query = nameIncludes.toLowerCase();
-  const recipes: Recipe[] = [];
-  state.recipes.recipes.forEach((recipe, name) => {
-    if (name.includes(query)) {
-      recipes.push(recipe);
-    }
-  });
-  return recipes;
+  return state.recipes.recipes.filter((recipe) => recipe.name.includes(query));
 };
 
 /** Redux reducer function for initialising global state storage */
@@ -72,12 +65,12 @@ export const recipeReducer = () => recipeSlice.reducer;
 const recipeSlice = createSlice({
   name: "recipes",
   initialState: {
-    recipes: new Map(),
+    recipes: [],
     recipeReadiness: "pending",
   } as RecipeState,
   reducers: {
     addRecipe: (state, action: PayloadAction<Recipe>) => {
-      state.recipes?.set(action.payload.name, action.payload);
+      state.recipes.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -87,11 +80,12 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipes.pending, (state) => {
         state.recipeReadiness = "pending";
       })
-      .addCase(fetchRecipes.fulfilled, (state, action: PayloadAction<Map<string, Recipe>>) => {
+      .addCase(fetchRecipes.fulfilled, (state, action: PayloadAction<Recipe[]>) => {
         state.recipes = action.payload;
+        state.recipeReadiness = "success";
       })
       .addCase(fetchRecipes.rejected, (state) => {
-        if (!state.recipes) {
+        if (state.recipes.length == 0) {
           state.recipeReadiness = "error";
         }
       });
@@ -105,5 +99,7 @@ export const fetchRecipes = createAsyncThunk("fetchRecipes", async (firebaseServ
   const response = await firebaseService.fetchAllRecipes();
 
   // The value we return becomes the `fulfilled` action payload
-  return new Map(response.docs.map((doc) => doc.data() as Recipe).map((recipe) => [recipe.name, recipe]));
+  const r = response.docs.map((doc) => doc.data() as Recipe);
+  console.log("AJH recipes converted: ", r);
+  return r;
 });

@@ -3,7 +3,7 @@ import NameSearch from "./search/NameSearch";
 import IngredientSearch from "./search/IngredientSearch";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectRandomRecipe, selectRecipeReadiness } from "../api/RecipeSlice";
+import { selectRecipeReadiness } from "../api/RecipeSlice";
 
 /**
  * The home page, to display on first open.
