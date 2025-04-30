@@ -13,6 +13,7 @@ import {
   isChecked,
 } from "../../utils/FormUtils";
 import { Link } from "react-router-dom";
+import { addIngredient } from "../../api/IngredientSlice";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -131,6 +132,7 @@ function NewIngredientPage(props: Properties) {
       },
     };
     props.firebase.createIngredient(output);
+    addIngredient(output);
   }
 }
 

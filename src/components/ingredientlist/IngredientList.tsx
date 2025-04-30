@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
-import FirebaseService from "../../service/FirebaseService";
-import IngredientInfo from "../../model/IngredientInfo";
+import React, { useState } from "react";
 import SearchInput from "../search/SearchInput";
 import { Link } from "react-router-dom";
-
-interface Properties {
-  /** The firebase service containing recipe & ingredient data. */
-  firebase: FirebaseService;
-}
+import { useSelector } from "react-redux";
+import { selectIngredients } from "../../api/IngredientSlice";
 
 /**
  * A page for creating a new recipe.
@@ -15,13 +10,9 @@ interface Properties {
  * @param props {@link Properties}
  * @returns A JSX element of the new recipe page.
  */
-function IngredientList(props: Properties) {
+function IngredientList() {
   const [nameFilter, setNameFilter] = useState("");
-  const [allIngredients, setAllIngredients] = useState<IngredientInfo[]>([]);
-
-  useEffect(() => {
-    setAllIngredients(props.firebase.getAllIngredients());
-  });
+  const allIngredients = useSelector(selectIngredients);
 
   return (
     <div className="w-75 min-h-75 mh-100">

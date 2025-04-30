@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Recipe from "../../model/Recipe";
+import React from "react";
 import SearchDisplay from "../recipe/SearchDisplay";
 import NoResultsFound from "./NoResultsFound";
 import SearchInput from "./SearchInput";
-import FirebaseService from "../../service/FirebaseService";
+import { useSelector } from "react-redux";
+import { AppState } from "../../api/Store";
+import { selectRecipesByIngredients } from "../../api/RecipeSlice";
 
 interface Properties {
-  /** The firebase database. */
-  firebase: FirebaseService;
   /** True if the database recipes have been loaded & are ready to search. */
   recipesReady: boolean;
   /** The current ingredient search state. */
@@ -18,26 +17,21 @@ interface Properties {
 
 /**
  * A search page for searching via ingredient
- * 
+ *
  * @param props {@link Properties}
  * @returns A JSX component for displaying a recipe search by ingredient
  */
 function IngredientSearch(props: Properties) {
-  const [recipeResults, setRecipeResults] = useState<Recipe[]>([]);
   const ingredients = props.search === "" ? ["", "", ""] : props.search.split(",");
   const ingredient1 = ingredients[0];
   const ingredient2 = ingredients[1];
   const ingredient3 = ingredients[2];
 
-  const emptySearch = ingredient1 === "" && ingredient2 === "" && ingredient3 === "";
+  const recipeResults = useSelector((state: AppState) =>
+    selectRecipesByIngredients(state, ingredient1, ingredient2, ingredient3),
+  );
 
-  useEffect(() => {
-    if (emptySearch) {
-      setRecipeResults([]);
-    } else {
-      setRecipeResults(props.firebase.getRecipesByIngredient(ingredient1, ingredient2, ingredient3));
-    }
-  }, [ingredient1, ingredient2, ingredient3]);
+  const emptySearch = ingredient1 === "" && ingredient2 === "" && ingredient3 === "";
 
   const urlQuery = ingredient1
     .split(" ")
@@ -71,8 +65,8 @@ function IngredientSearch(props: Properties) {
 
   /**
    * Set the search state
-   * 
-   * @param ings Current ingredients to search with 
+   *
+   * @param ings Current ingredients to search with
    * @returns void
    */
   function setSearch(ings: string[]) {
