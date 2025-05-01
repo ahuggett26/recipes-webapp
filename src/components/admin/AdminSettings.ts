@@ -17,30 +17,6 @@ class AdminSettings {
   }
 
   /**
-   * @returns true if an admin password code is set & enabled
-   */
-  public async isAdminCodeEnabled() {
-    const fetchedDoc = await this.adminDoc;
-    return fetchedDoc !== undefined && fetchedDoc.get("code") !== undefined && fetchedDoc.get("code") !== "";
-  }
-
-  /**
-   * @param code Password code to compare to the set admin password code
-   * @returns true if the inputted password matches the admin password
-   */
-  public async isAdminCodeCorrect(code: string) {
-    return sha256(code) === (await this.adminDoc).get("code");
-  }
-
-  /**
-   * @returns true if applying a new recipe is locked behind the admin password
-   */
-  public async isNewRecipesLocked() {
-    const fetchedDoc = await this.adminDoc;
-    return fetchedDoc !== undefined && fetchedDoc.get("lockNewRecipes") !== undefined;
-  }
-
-  /**
    * Saves the given settings into the firebase database
    *
    * @param code The new password code

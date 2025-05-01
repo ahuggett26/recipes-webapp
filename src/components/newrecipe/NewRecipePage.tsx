@@ -5,10 +5,11 @@ import Recipe from "../../model/Recipe";
 import { Ingredient } from "../../model/Ingredient";
 import StepsInput from "./StepsInput";
 import FirebaseService from "../../service/FirebaseService";
-import PasswordPopup from "../admin/PasswordPopup";
 import AdminSettings from "../admin/AdminSettings";
 import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
 import { addRecipe } from "../../api/RecipeSlice";
+import { selectIsAdminAuthorized } from "../../api/AdminSlice";
+import { useSelector } from "react-redux";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -27,15 +28,9 @@ function NewRecipePage(props: Properties) {
   const [steps, setSteps] = useState([""]);
   const [ingredients, setIngredients] = useState([0]);
   const [imgUrl, setImgUrl] = useState("");
-  const [passPopupVisible, setPassPopupVisible] = useState(false);
+  const isAuthenticated = useSelector(selectIsAdminAuthorized);
   return (
     <div className="w-75 min-h-75 mh-100">
-      <PasswordPopup
-        adminSettings={props.adminSettings}
-        visible={passPopupVisible}
-        setVisible={setPassPopupVisible}
-        onSuccess={() => submitNewRecipe()}
-      />
       <h1 className="pt-2">Create New Recipe</h1>
       <input id="titleInput" className="form-control m-1" placeholder="Title" />
       <div className="d-flex justify-content-evenly align-items-center">
@@ -51,7 +46,11 @@ function NewRecipePage(props: Properties) {
       <InformationalInput />
       <IngredientsInput ingredients={ingredients} setIngredients={setIngredients} />
       <StepsInput steps={steps} setSteps={setSteps} />
-      <button className="btn btn-primary d-block text-center mx-auto mt-2" onClick={() => onSubmit()}>
+      <button
+        className="btn btn-primary d-block text-center mx-auto mt-2"
+        disabled={!isAuthenticated}
+        onClick={() => onSubmit(isAuthenticated)}
+      >
         Submit
       </button>
     </div>
@@ -63,13 +62,11 @@ function NewRecipePage(props: Properties) {
    * If adding a recipe is locked behind an admin code, opens the password popup.
    * Otherwise, the recipe will be submitted immediately.
    */
-  async function onSubmit() {
-    const adminCodeEnabled = await props.adminSettings.isAdminCodeEnabled();
-    const newRecipesLocked = await props.adminSettings.isNewRecipesLocked();
-    if (adminCodeEnabled && newRecipesLocked) {
-      setPassPopupVisible(true);
-    } else {
+  async function onSubmit(isAuthenticated: boolean) {
+    if (isAuthenticated) {
       submitNewRecipe();
+    } else {
+      alert("Sorry, you cannot submit a recipe as you do not have admin access.");
     }
   }
 

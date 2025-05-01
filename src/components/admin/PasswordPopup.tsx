@@ -18,6 +18,8 @@ interface Properties {
  * This popup should always be in the html where it should be displayed when visible.
  * Set visibility through {@link Properties.visible}
  *
+ * TODO: convert this into a full admin entry page
+ *
  * @param props {@link Properties}
  * @returns A JSX element containing the password popup modal
  */
@@ -31,14 +33,15 @@ const PasswordPopup = (props: Properties) => {
    */
   function verifyPassword() {
     const password = (document.getElementById("passwordInput") as HTMLInputElement).value;
-    props.adminSettings.isAdminCodeCorrect(password).then((isCorrect) => {
-      if (isCorrect) {
-        props.setVisible(false);
-        props.onSuccess();
-      } else {
-        setIncorrectPass(true);
-      }
-    });
+    // (dispatch as AdminDispatch)(attemptAdminAuthentication(props.firebaseService))
+    // props.adminSettings.isAdminCodeCorrect(password).then((isCorrect) => {
+    //   if (isCorrect) {
+    //     props.setVisible(false);
+    //     props.onSuccess();
+    //   } else {
+    //     setIncorrectPass(true);
+    //   }
+    // });
   }
 
   return (

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import FirebaseService from "../../service/FirebaseService";
 import AdminSettings from "../admin/AdminSettings";
-import PasswordPopup from "../admin/PasswordPopup";
 import { measurementDatalist } from "../../model/Measurement";
 import IngredientInfo from "../../model/IngredientInfo";
 import {
@@ -14,6 +13,8 @@ import {
 } from "../../utils/FormUtils";
 import { Link } from "react-router-dom";
 import { addIngredient } from "../../api/IngredientSlice";
+import { useSelector } from "react-redux";
+import { selectIsAdminAuthorized } from "../../api/AdminSlice";
 
 interface Properties {
   /** The firebase service containing recipe data. */
@@ -29,16 +30,9 @@ interface Properties {
  * @returns A JSX element of the new recipe page.
  */
 function NewIngredientPage(props: Properties) {
-  const [passPopupVisible, setPassPopupVisible] = useState(false);
+  const isAuthenticated = useSelector(selectIsAdminAuthorized);
   return (
     <div className="w-75 min-h-75 mh-100">
-      <PasswordPopup
-        adminSettings={props.adminSettings}
-        visible={passPopupVisible}
-        setVisible={setPassPopupVisible}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onSuccess={() => {}}
-      />
       <h1 className="pt-2">Add New Ingredient</h1>
       <Link to="../ingredient-list">See all current ingredients</Link>
       <input id="titleInput" className="form-control m-4" placeholder="Name" />
@@ -94,7 +88,7 @@ function NewIngredientPage(props: Properties) {
         <label htmlFor="pescetarianCheckInput">Is Pescetarian</label>
         <input id="pescetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
       </div>
-      <button className="btn btn-primary d-block text-center mx-auto mt-2" onClick={() => onSubmit()}>
+      <button className="btn btn-primary d-block text-center mx-auto mt-2"  disabled={!isAuthenticated} onClick={() => onSubmit(isAuthenticated)}>
         Submit
       </button>
       <button className="btn btn-outline-primary d-block text-center mx-auto mt-3" onClick={() => clearAllFields()}>
@@ -103,9 +97,12 @@ function NewIngredientPage(props: Properties) {
     </div>
   );
 
-  async function onSubmit() {
-    // TODO: password protect this
-    submitNewIngredient();
+  async function onSubmit(isAuthenticated: boolean) {
+    if (isAuthenticated) {
+      submitNewIngredient();
+    } else {
+      alert("Sorry, you cannot submit an ingredient as you do not have admin access.");
+    }
   }
 
   /**
