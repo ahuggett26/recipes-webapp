@@ -2,9 +2,8 @@ import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { fetchRecipes } from "../api/RecipeSlice";
 import { fetchIngredients } from "../api/IngredientSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { IngredientDispatch, RecipeDispatch } from "../api/Store";
-import { selectFirebaseService } from "../api/FirebaseSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../api/Store";
 
 /**
  * The root page, within which all other pages are contained.
@@ -15,13 +14,11 @@ import { selectFirebaseService } from "../api/FirebaseSlice";
  * @returns A JSX component of the root page.
  */
 function Root() {
-  const firebaseService = useSelector(selectFirebaseService);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch() as AppDispatch;
   useEffect(() => {
     // Fetch the initial data from DB to load into state on first render
-    console.log("Fetching recipes from Root");
-    (dispatch as RecipeDispatch)(fetchRecipes(firebaseService));
-    (dispatch as IngredientDispatch)(fetchIngredients(firebaseService));
+    dispatch(fetchRecipes());
+    dispatch(fetchIngredients());
   });
 
   return (

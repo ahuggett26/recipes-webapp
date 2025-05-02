@@ -1,7 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Recipe from "../model/Recipe";
-import FirebaseService from "../service/FirebaseService";
-import { AppState } from "./Store";
+import { AppState, AppThunk } from "./Store";
 
 // Define the TS type for the recipe slice's state
 export interface RecipeState {
@@ -108,37 +107,30 @@ const recipeSlice = createSlice({
     recipeReadiness: "pending",
   } as RecipeState,
   reducers: {
+    setRecipes: (state, action: PayloadAction<Recipe[]>) => {
+      state.recipes = action.payload;
+      state.recipeReadiness = "success";
+    },
+    setRecipesError: (state) => {
+      state.recipeReadiness = "error";
+    },
     addRecipe: (state, action: PayloadAction<Recipe>) => {
       state.recipes.push(action.payload);
     },
   },
-  extraReducers: (builder) => {
-    builder
-      // Handle the action types defined by the `incrementAsync` thunk defined below.
-      // This lets the slice reducer update the state with request status and results.
-      .addCase(fetchRecipes.pending, (state) => {
-        state.recipeReadiness = "pending";
-      })
-      .addCase(fetchRecipes.fulfilled, (state, action: PayloadAction<Recipe[]>) => {
-        state.recipes = action.payload;
-        state.recipeReadiness = "success";
-      })
-      .addCase(fetchRecipes.rejected, (state) => {
-        if (state.recipes.length == 0) {
-          state.recipeReadiness = "error";
-        }
-      });
-  },
 });
 
 /**
- * Initial load of recipes from firebase
+ * Initial load of recipes from Firebase
  */
-export const fetchRecipes = createAsyncThunk("fetchRecipes", async (firebaseService: FirebaseService) => {
-  const response = await firebaseService.fetchAllRecipes();
+export const fetchRecipes = (): AppThunk<void> => async (dispatch, getState) => {
+  const firebaseService = getState().firebase.firebaseService;
+  const recipesPromise = firebaseService.fetchAllRecipes();
+  recipesPromise.catch(() => dispatch(recipeSlice.actions.setRecipesError()));
+  const response = await recipesPromise;
 
   // The value we return becomes the `fulfilled` action payload
   const r = response.docs.map((doc) => doc.data() as Recipe);
   console.log("AJH recipes converted: ", r);
-  return r;
-});
+  dispatch(recipeSlice.actions.setRecipes(r));
+};

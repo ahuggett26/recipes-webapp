@@ -1,4 +1,4 @@
-import { configureStore, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { configureStore, ThunkAction, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { recipeReducer, RecipeState } from "./RecipeSlice";
 import { ingredientReducer, IngredientState } from "./IngredientSlice";
 import { adminReducer, AdminState } from "./AdminSlice";
@@ -23,6 +23,6 @@ export interface AppState {
   firebase: FirebaseState;
 }
 
-export type RecipeDispatch = ThunkDispatch<RecipeState, undefined, UnknownAction>;
-export type IngredientDispatch = ThunkDispatch<IngredientState, undefined, UnknownAction>;
-export type AdminDispatch = ThunkDispatch<AdminState, undefined, UnknownAction>;
+export type AppDispatch = ThunkDispatch<AppState, undefined, UnknownAction>;
+
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppState, unknown, UnknownAction>;

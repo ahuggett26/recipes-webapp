@@ -1,7 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import IngredientInfo from "../model/IngredientInfo";
-import FirebaseService from "../service/FirebaseService";
-import { AppState } from "./Store";
+import { AppState, AppThunk } from "./Store";
 
 // Define the TS type for the recipe slice's state
 export interface IngredientState {
@@ -33,40 +32,26 @@ const ingredientSlice = createSlice({
     ingredients: undefined,
   } as IngredientState,
   reducers: {
+    setIngredients: (state, action: PayloadAction<IngredientInfo[]>) => {
+      state.ingredients = action.payload;
+    },
     addIngredient: (state, action: PayloadAction<IngredientInfo>) => {
       // Preferably, just insert in the right place
       state.ingredients?.push(action.payload);
       state.ingredients?.sort((a, b) => a.name.localeCompare(b.name));
     },
   },
-  extraReducers: (builder) => {
-    builder
-      // Handle the action types defined by the `incrementAsync` thunk defined below.
-      // This lets the slice reducer update the state with request status and results.
-      .addCase(fetchIngredients.pending, (state) => {
-        if (!state.ingredients) {
-          state.ingredients = undefined;
-        }
-      })
-      .addCase(fetchIngredients.fulfilled, (state, action: PayloadAction<IngredientInfo[]>) => {
-        state.ingredients = action.payload;
-      })
-      .addCase(fetchIngredients.rejected, (state) => {
-        if (!state.ingredients) {
-          state.ingredients = null;
-        }
-      });
-  },
 });
 
 /**
  * Initial load of ingredients from Firebase
  */
-export const fetchIngredients = createAsyncThunk("fetchIngredients", async (firebaseService: FirebaseService) => {
+export const fetchIngredients = (): AppThunk<void> => async (dispatch, getState) => {
+  const firebaseService = getState().firebase.firebaseService;
   const response = await firebaseService.fetchAllIngredients();
   const ingredients = response.docs.map((doc) => doc.data() as IngredientInfo);
   ingredients.sort((a, b) => a.name.localeCompare(b.name));
 
   // The value we return becomes the `fulfilled` action payload
-  return ingredients;
-});
+  dispatch(ingredientSlice.actions.setIngredients(ingredients));
+};
