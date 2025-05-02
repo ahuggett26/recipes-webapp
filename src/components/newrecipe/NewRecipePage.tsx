@@ -4,19 +4,11 @@ import InformationalInput from "./InformationalInput";
 import Recipe from "../../model/Recipe";
 import { Ingredient } from "../../model/Ingredient";
 import StepsInput from "./StepsInput";
-import FirebaseService from "../../service/FirebaseService";
-import AdminSettings from "../admin/AdminSettings";
 import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
 import { addRecipe } from "../../api/RecipeSlice";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
 import { useSelector } from "react-redux";
-
-interface Properties {
-  /** The firebase service containing recipe data. */
-  firebase: FirebaseService;
-  /** Admin settings for communication with firebase */
-  adminSettings: AdminSettings;
-}
+import { selectFirebaseService } from "../../api/FirebaseSlice";
 
 /**
  * A page for creating a new recipe.
@@ -24,7 +16,8 @@ interface Properties {
  * @param props {@link Properties}
  * @returns A JSX element of the new recipe page.
  */
-function NewRecipePage(props: Properties) {
+function NewRecipePage() {
+  const firebase = useSelector(selectFirebaseService);
   const [steps, setSteps] = useState([""]);
   const [ingredients, setIngredients] = useState([0]);
   const [imgUrl, setImgUrl] = useState("");
@@ -87,7 +80,7 @@ function NewRecipePage(props: Properties) {
       secondaryIngredients,
       steps: steps.map((_, index) => getFieldString("steps-input-" + index)),
     };
-    props.firebase.createRecipe(output);
+    firebase.createRecipe(output);
     addRecipe(output);
   }
 

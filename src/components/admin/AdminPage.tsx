@@ -2,11 +2,7 @@ import React from "react";
 import AdminSettings from "./AdminSettings";
 import { useSelector } from "react-redux";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
-
-interface Properties {
-  /** Admin settings for communication with firebase */
-  adminSettings: AdminSettings;
-}
+import { selectFirebaseService } from "../../api/FirebaseSlice";
 
 /**
  * Page displaying current admin settings, and allowing modification of those settings once the password is provided.
@@ -14,7 +10,9 @@ interface Properties {
  * @param props {@link Properties}
  * @returns A JSX element of the admin page.
  */
-function AdminPage(props: Properties) {
+function AdminPage() {
+  const firebase = useSelector(selectFirebaseService);
+  const adminSettings = new AdminSettings(firebase);
   const isAdminAuthorised = useSelector(selectIsAdminAuthorized);
   const settingsLocked = !isAdminAuthorised;
 
@@ -61,7 +59,7 @@ function AdminPage(props: Properties) {
     const password = (document.getElementById("codeInput") as HTMLInputElement).value;
     const lockNewSettings = (document.getElementById("lockNewRecipesInput") as HTMLInputElement).checked;
 
-    props.adminSettings.applySettings(password, lockNewSettings);
+    adminSettings.applySettings(password, lockNewSettings);
   }
 }
 

@@ -8,26 +8,21 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import NewRecipeButton from "./components/newrecipe/NewRecipeButton";
 import NewRecipePage from "./components/newrecipe/NewRecipePage";
 import Root from "./components/Root";
-import FirebaseService from "./service/FirebaseService";
 import HomeButton from "./components/HomeButton";
 import DesktopFullDisplay from "./components/recipe/DesktopFullDisplay";
 import FullDisplay from "./components/recipe/FullDisplay";
 import MobileFullDisplay from "./components/recipe/MobileFullDisplay";
 import AdminPage from "./components/admin/AdminPage";
 import AdminButton from "./components/admin/AdminButton";
-import AdminSettings from "./components/admin/AdminSettings";
 import NewIngredientPage from "./components/newingredient/NewIngredientPage";
 import IngredientList from "./components/ingredientlist/IngredientList";
 import { Provider as StoreProvider } from "react-redux";
 import { store } from "./api/Store";
 
-const firebaseService = new FirebaseService();
-const adminSettings = new AdminSettings(firebaseService);
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root firebaseService={firebaseService} />,
+    element: <Root />,
     children: [
       {
         path: "/",
@@ -44,7 +39,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <AdminPage adminSettings={adminSettings} />
+            <AdminPage />
           </>
         ),
       },
@@ -53,7 +48,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <NewRecipePage firebase={firebaseService} adminSettings={adminSettings} />
+            <NewRecipePage />
           </>
         ),
       },
@@ -62,7 +57,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <HomeButton />
-            <NewIngredientPage firebase={firebaseService} adminSettings={adminSettings} />
+            <NewIngredientPage />
           </>
         ),
       },
