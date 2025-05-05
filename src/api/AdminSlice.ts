@@ -14,7 +14,7 @@ export interface AdminState {
 
 /** Selector to determine whether or not the user is authorised to perform admin actions. */
 export const selectIsAdminAuthorized = (state: AppState) =>
-  state.admin.isAdminAuthorized || !state.admin.adminCodeEnabled;
+  (state.admin.isAdminAuthorized || !state.admin.adminCodeEnabled) && state.admin.adminCodeEnabled !== null;
 
 /** Redux reducer function for initialising global state storage */
 export const adminReducer = () => adminSlice.reducer;
@@ -26,7 +26,7 @@ const adminSlice = createSlice({
   name: "admin",
   initialState: {
     adminCodeEnabled: true,
-    isAdminAuthorized: true, // reverse this!!!!
+    isAdminAuthorized: false,
   } as AdminState,
   reducers: {
     setAdminCodeRequiredError: (state) => {
@@ -45,7 +45,7 @@ const adminSlice = createSlice({
  * Attemps admin authentication using an input code.
  */
 export const attemptAdminAuth =
-  (inputCode: string): AppThunk<Promise<boolean>> =>
+  (inputCode: string): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
     const firebaseService = getState().firebase.firebaseService;
     const adminDocFetch = firebaseService.fetchAdminDoc();
@@ -54,7 +54,6 @@ export const attemptAdminAuth =
     const adminDoc = await adminDocFetch;
     const isAuthorized = sha256(inputCode) === adminDoc.get("code");
     dispatch(adminSlice.actions.setAdminAuthorized(isAuthorized));
-    return true;
   };
 
 /**

@@ -18,6 +18,7 @@ import NewIngredientPage from "./components/newingredient/NewIngredientPage";
 import IngredientList from "./components/ingredientlist/IngredientList";
 import { Provider as StoreProvider } from "react-redux";
 import { store } from "./api/Store";
+import AdminLoginPage from "./components/admin/AdminLoginPage";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
             <Home />
           </>
         ),
+      },
+      {
+        path: "/login",
+        element: <AdminLoginPage />,
       },
       {
         path: "/admin",
