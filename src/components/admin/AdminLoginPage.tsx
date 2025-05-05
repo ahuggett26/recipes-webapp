@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AppDispatch } from "../../api/Store";
 import { attemptAdminAuth } from "../../api/AdminSlice";
 
@@ -13,13 +13,16 @@ import { attemptAdminAuth } from "../../api/AdminSlice";
 function AdminLoginPage() {
   const dispatch = useDispatch() as AppDispatch;
   const navigate = useNavigate();
+  const [urlParams] = useSearchParams();
+  const urlCode = urlParams.get("code");
+
+  const [inputCode, setInputCode] = useState(urlCode ?? "");
 
   /**
    * Verifies the input password and redirects to the home page.
    */
   function verifyAndLogin() {
-    const password = (document.getElementById("passwordInput") as HTMLInputElement).value;
-    dispatch(attemptAdminAuth(password)).finally(() => navigate("/"));
+    dispatch(attemptAdminAuth(inputCode)).finally(() => navigate("/"));
   }
 
   return (
@@ -27,7 +30,13 @@ function AdminLoginPage() {
       <h1 className="pt-2 pb-3">Admin Login:</h1>
       <div>
         <label className="justify-content-start">Enter admin code to login as an admin:</label>
-        <input type="password" id="passwordInput" className="form-control" />
+        <input
+          type="password"
+          id="passwordInput"
+          className="form-control"
+          value={inputCode}
+          onChange={(elem) => setInputCode(elem.target.value)}
+        />
         <button type="button" className="btn btn-primary mt-2" onClick={verifyAndLogin}>
           Submit
         </button>
