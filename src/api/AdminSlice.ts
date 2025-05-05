@@ -1,12 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import FirebaseService from "../service/FirebaseService";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sha256 } from "js-sha256";
-import { AppState } from "./Store";
+import { AppState, AppThunk } from "./Store";
 
 // Define the TS type for the admin slice's state
 export interface AdminState {
-  // True if an admin code has been enabled by the user.
-  adminCodeEnabled: boolean;
+  // True if an admin code has been enabled by the user. Null indicates an error in fetching.
+  adminCodeEnabled: boolean | null;
   // True if a correct admin code has been entered by the user.
   // This means the user will be able to access admin-only functions, such as submitting recipes.
   // TODO: a more secure method should be used here instead - try JWT/authenticating the database
@@ -27,43 +26,46 @@ const adminSlice = createSlice({
   name: "admin",
   initialState: {
     adminCodeEnabled: true,
-    isAdminAuthorized: false,
+    isAdminAuthorized: true, // reverse this!!!!
   } as AdminState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchAdminRequired.fulfilled, (state, action: PayloadAction<boolean>) => {
+  reducers: {
+    setAdminCodeRequiredError: (state) => {
+      state.adminCodeEnabled = null;
+    },
+    setAdminCodeRequired: (state, action: PayloadAction<boolean>) => {
       state.adminCodeEnabled = action.payload;
-    });
-    builder.addCase(attemptAdminAuthentication.rejected, (state) => {
-      state.isAdminAuthorized = false;
-    });
-    builder.addCase(attemptAdminAuthentication.fulfilled, (state, action: PayloadAction<boolean>) => {
+    },
+    setAdminAuthorized: (state, action: PayloadAction<boolean>) => {
       state.isAdminAuthorized = action.payload;
-    });
+    },
   },
 });
 
-interface AttemptAdminAuthParams {
-  inputCode: string;
-  firebaseService: FirebaseService;
-}
+/**
+ * Attemps admin authentication using an input code.
+ */
+export const attemptAdminAuth =
+  (inputCode: string): AppThunk<Promise<boolean>> =>
+  async (dispatch, getState) => {
+    const firebaseService = getState().firebase.firebaseService;
+    const adminDocFetch = firebaseService.fetchAdminDoc();
+    adminDocFetch.catch(() => dispatch(adminSlice.actions.setAdminAuthorized(false)));
 
-/** Verifies whether an admin code is valid and sets it in state */
-export const attemptAdminAuthentication = createAsyncThunk(
-  "attemptAdminAuth",
-  async (params: AttemptAdminAuthParams) => {
-    const adminDoc = await params.firebaseService.fetchAdminDoc();
-
-    return sha256(params.inputCode) === adminDoc.get("code");
-  },
-);
+    const adminDoc = await adminDocFetch;
+    const isAuthorized = sha256(inputCode) === adminDoc.get("code");
+    dispatch(adminSlice.actions.setAdminAuthorized(isAuthorized));
+    return true;
+  };
 
 /**
  * Initial state of if admin code is required from Firebase
  */
-export const fetchAdminRequired = createAsyncThunk("fetchAdminRequired", async (firebaseService: FirebaseService) => {
-  const response = await firebaseService.fetchAdminDoc();
+export const fetchAdminRequired = (): AppThunk<void> => async (dispatch, getState) => {
+  const firebaseService = getState().firebase.firebaseService;
+  const adminDocFetch = firebaseService.fetchAdminDoc();
+  adminDocFetch.catch(() => dispatch(adminSlice.actions.setAdminCodeRequiredError()));
 
-  // The value we return becomes the `fulfilled` action payload
-  return response.get("code") !== undefined && response.get("code") !== "";
-});
+  const response = await adminDocFetch;
+  const adminCodeRequired = response.get("code") !== undefined && response.get("code") !== "";
+  dispatch(adminSlice.actions.setAdminCodeRequired(adminCodeRequired));
+};
