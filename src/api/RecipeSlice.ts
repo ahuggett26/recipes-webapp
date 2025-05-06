@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Recipe from "../model/Recipe";
 import { AppState, AppThunk } from "./Store";
-import { selectFirebaseService } from "./FirebaseSlice";
+import { createRecipe, fetchAllRecipes } from "../service/FirebaseService";
 
 // Define the TS type for the recipe slice's state
 export interface RecipeState {
@@ -124,18 +124,17 @@ const recipeSlice = createSlice({
  */
 export const addRecipe =
   (recipe: Recipe): AppThunk<void> =>
-  (dispatch, getState) => {
-    const firebaseService = selectFirebaseService(getState());
-    firebaseService.createRecipe(recipe);
+  (dispatch) => {
+    createRecipe(recipe);
     dispatch(recipeSlice.actions.addRecipe(recipe));
   };
 
 /**
  * Initial load of recipes from Firebase
  */
-export const fetchRecipes = (): AppThunk<void> => async (dispatch, getState) => {
-  const firebaseService = selectFirebaseService(getState());
-  const recipesPromise = firebaseService.fetchAllRecipes();
+export const fetchRecipes = (): AppThunk<void> => async (dispatch) => {
+  // const firebaseService = selectFirebaseService(getState());
+  const recipesPromise = fetchAllRecipes();
   recipesPromise.catch(() => dispatch(recipeSlice.actions.setRecipesError()));
   const response = await recipesPromise;
 

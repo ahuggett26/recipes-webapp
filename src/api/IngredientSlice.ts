@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import IngredientInfo from "../model/IngredientInfo";
 import { AppState, AppThunk } from "./Store";
-import { selectFirebaseService } from "./FirebaseSlice";
+import { createIngredient, fetchAllIngredients } from "../service/FirebaseService";
 
 // Define the TS type for the recipe slice's state
 export interface IngredientState {
@@ -47,18 +47,16 @@ const ingredientSlice = createSlice({
  */
 export const addIngredient =
   (ingredient: IngredientInfo): AppThunk<void> =>
-  (dispatch, getState) => {
-    const firebaseService = selectFirebaseService(getState());
-    firebaseService.createIngredient(ingredient);
+  (dispatch) => {
+    createIngredient(ingredient);
     dispatch(ingredientSlice.actions.addIngredient(ingredient));
   };
 
 /**
  * Initial load of ingredients from Firebase
  */
-export const fetchIngredients = (): AppThunk<void> => async (dispatch, getState) => {
-  const firebaseService = selectFirebaseService(getState());
-  const response = await firebaseService.fetchAllIngredients();
+export const fetchIngredients = (): AppThunk<void> => async (dispatch) => {
+  const response = await fetchAllIngredients();
   const ingredients = response.docs.map((doc) => doc.data() as IngredientInfo);
   ingredients.sort((a, b) => a.name.localeCompare(b.name));
 

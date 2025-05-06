@@ -2,7 +2,6 @@ import { configureStore, ThunkAction, ThunkDispatch, UnknownAction } from "@redu
 import { recipeReducer, RecipeState } from "./RecipeSlice";
 import { ingredientReducer, IngredientState } from "./IngredientSlice";
 import { adminReducer, AdminState } from "./AdminSlice";
-import { firebaseReducer, FirebaseState } from "./FirebaseSlice";
 
 /**
  * Redux global state store object
@@ -12,7 +11,6 @@ export const store = configureStore({
     recipes: recipeReducer(),
     ingredients: ingredientReducer(),
     admin: adminReducer(),
-    firebase: firebaseReducer(),
   },
 });
 
@@ -20,7 +18,6 @@ export interface AppState {
   recipes: RecipeState;
   ingredients: IngredientState;
   admin: AdminState;
-  firebase: FirebaseState;
 }
 
 export type AppDispatch = ThunkDispatch<AppState, undefined, UnknownAction>;
