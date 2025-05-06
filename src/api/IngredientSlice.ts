@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import IngredientInfo from "../model/IngredientInfo";
-import FirebaseService from "../service/FirebaseService";
-import { AppState } from "./Store";
+import { AppState, AppThunk } from "./Store";
+import { createIngredient, fetchAllIngredients } from "../service/FirebaseService";
 
 // Define the TS type for the recipe slice's state
 export interface IngredientState {
@@ -19,9 +19,6 @@ export const selectIngredients = (state: AppState) => {
 };
 
 /** Redux reducer function for initialising global state storage */
-export const addIngredient = (ingredient: IngredientInfo) => ingredientSlice.actions.addIngredient(ingredient);
-
-/** Redux reducer function for initialising global state storage */
 export const ingredientReducer = () => ingredientSlice.reducer;
 
 /**
@@ -33,40 +30,36 @@ const ingredientSlice = createSlice({
     ingredients: undefined,
   } as IngredientState,
   reducers: {
+    setIngredients: (state, action: PayloadAction<IngredientInfo[]>) => {
+      state.ingredients = action.payload;
+    },
     addIngredient: (state, action: PayloadAction<IngredientInfo>) => {
       // Preferably, just insert in the right place
       state.ingredients?.push(action.payload);
       state.ingredients?.sort((a, b) => a.name.localeCompare(b.name));
     },
   },
-  extraReducers: (builder) => {
-    builder
-      // Handle the action types defined by the `incrementAsync` thunk defined below.
-      // This lets the slice reducer update the state with request status and results.
-      .addCase(fetchIngredients.pending, (state) => {
-        if (!state.ingredients) {
-          state.ingredients = undefined;
-        }
-      })
-      .addCase(fetchIngredients.fulfilled, (state, action: PayloadAction<IngredientInfo[]>) => {
-        state.ingredients = action.payload;
-      })
-      .addCase(fetchIngredients.rejected, (state) => {
-        if (!state.ingredients) {
-          state.ingredients = null;
-        }
-      });
-  },
 });
+
+/**
+ * Adds an ingredient to the database.
+ * Also ensures the ingredient is added to local state, so refetching is not necessary.
+ */
+export const addIngredient =
+  (ingredient: IngredientInfo): AppThunk<void> =>
+  (dispatch) => {
+    createIngredient(ingredient);
+    dispatch(ingredientSlice.actions.addIngredient(ingredient));
+  };
 
 /**
  * Initial load of ingredients from Firebase
  */
-export const fetchIngredients = createAsyncThunk("fetchIngredients", async (firebaseService: FirebaseService) => {
-  const response = await firebaseService.fetchAllIngredients();
+export const fetchIngredients = (): AppThunk<void> => async (dispatch) => {
+  const response = await fetchAllIngredients();
   const ingredients = response.docs.map((doc) => doc.data() as IngredientInfo);
   ingredients.sort((a, b) => a.name.localeCompare(b.name));
 
   // The value we return becomes the `fulfilled` action payload
-  return ingredients;
-});
+  dispatch(ingredientSlice.actions.setIngredients(ingredients));
+};

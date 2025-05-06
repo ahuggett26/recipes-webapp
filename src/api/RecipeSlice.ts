@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Recipe from "../model/Recipe";
-import FirebaseService from "../service/FirebaseService";
-import { AppState } from "./Store";
+import { AppState, AppThunk } from "./Store";
+import { createRecipe, fetchAllRecipes } from "../service/FirebaseService";
 
 // Define the TS type for the recipe slice's state
 export interface RecipeState {
@@ -93,9 +93,6 @@ export const selectRecipesByIngredients = (
 };
 
 /** Redux reducer function for initialising global state storage */
-export const addRecipe = (recipe: Recipe) => recipeSlice.actions.addRecipe(recipe);
-
-/** Redux reducer function for initialising global state storage */
 export const recipeReducer = () => recipeSlice.reducer;
 
 /**
@@ -108,37 +105,41 @@ const recipeSlice = createSlice({
     recipeReadiness: "pending",
   } as RecipeState,
   reducers: {
+    setRecipes: (state, action: PayloadAction<Recipe[]>) => {
+      state.recipes = action.payload;
+      state.recipeReadiness = "success";
+    },
+    setRecipesError: (state) => {
+      state.recipeReadiness = "error";
+    },
     addRecipe: (state, action: PayloadAction<Recipe>) => {
       state.recipes.push(action.payload);
     },
   },
-  extraReducers: (builder) => {
-    builder
-      // Handle the action types defined by the `incrementAsync` thunk defined below.
-      // This lets the slice reducer update the state with request status and results.
-      .addCase(fetchRecipes.pending, (state) => {
-        state.recipeReadiness = "pending";
-      })
-      .addCase(fetchRecipes.fulfilled, (state, action: PayloadAction<Recipe[]>) => {
-        state.recipes = action.payload;
-        state.recipeReadiness = "success";
-      })
-      .addCase(fetchRecipes.rejected, (state) => {
-        if (state.recipes.length == 0) {
-          state.recipeReadiness = "error";
-        }
-      });
-  },
 });
 
 /**
- * Initial load of recipes from firebase
+ * Adds a recipe to the database.
+ * Also ensures the recipe is added to local state, so refetching is not necessary.
  */
-export const fetchRecipes = createAsyncThunk("fetchRecipes", async (firebaseService: FirebaseService) => {
-  const response = await firebaseService.fetchAllRecipes();
+export const addRecipe =
+  (recipe: Recipe): AppThunk<void> =>
+  (dispatch) => {
+    createRecipe(recipe);
+    dispatch(recipeSlice.actions.addRecipe(recipe));
+  };
+
+/**
+ * Initial load of recipes from Firebase
+ */
+export const fetchRecipes = (): AppThunk<void> => async (dispatch) => {
+  // const firebaseService = selectFirebaseService(getState());
+  const recipesPromise = fetchAllRecipes();
+  recipesPromise.catch(() => dispatch(recipeSlice.actions.setRecipesError()));
+  const response = await recipesPromise;
 
   // The value we return becomes the `fulfilled` action payload
   const r = response.docs.map((doc) => doc.data() as Recipe);
   console.log("AJH recipes converted: ", r);
-  return r;
-});
+  dispatch(recipeSlice.actions.setRecipes(r));
+};
