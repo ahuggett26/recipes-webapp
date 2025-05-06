@@ -68,3 +68,24 @@ export const fetchAdminRequired = (): AppThunk<void> => async (dispatch, getStat
   const adminCodeRequired = response.get("code") !== undefined && response.get("code") !== "";
   dispatch(adminSlice.actions.setAdminCodeRequired(adminCodeRequired));
 };
+
+/**
+ * Saves the given settings into the firebase database
+ *
+ * Given that the user must be authorized in order to trigger this function,
+ * we will keep the user authorized.
+ *
+ * @param code The new password code
+ * @param lockNewRecipes the new {@link isNewRecipesLocked} setting
+ */
+export const saveAdminSettings =
+  (code: string, lockNewRecipes: boolean): AppThunk<void> =>
+  async (dispatch, getState) => {
+    const firebaseService = getState().firebase.firebaseService;
+    firebaseService.saveAdminSettings({
+      code: code === "" ? "" : sha256(code),
+      lockNewRecipes,
+    });
+    dispatch(adminSlice.actions.setAdminCodeRequired(lockNewRecipes));
+    dispatch(adminSlice.actions.setAdminAuthorized(true));
+  };

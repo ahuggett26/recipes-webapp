@@ -1,8 +1,7 @@
 import React from "react";
-import AdminSettings from "./AdminSettings";
-import { useSelector } from "react-redux";
-import { selectIsAdminAuthorized } from "../../api/AdminSlice";
-import { selectFirebaseService } from "../../api/FirebaseSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { saveAdminSettings, selectIsAdminAuthorized } from "../../api/AdminSlice";
+import { AppDispatch } from "../../api/Store";
 
 /**
  * Page displaying current admin settings, and allowing modification of those settings once the password is provided.
@@ -11,8 +10,7 @@ import { selectFirebaseService } from "../../api/FirebaseSlice";
  * @returns A JSX element of the admin page.
  */
 function AdminPage() {
-  const firebase = useSelector(selectFirebaseService);
-  const adminSettings = new AdminSettings(firebase);
+  const dispatch = useDispatch as AppDispatch;
   const isAdminAuthorised = useSelector(selectIsAdminAuthorized);
   const settingsLocked = !isAdminAuthorised;
 
@@ -59,7 +57,7 @@ function AdminPage() {
     const password = (document.getElementById("codeInput") as HTMLInputElement).value;
     const lockNewSettings = (document.getElementById("lockNewRecipesInput") as HTMLInputElement).checked;
 
-    adminSettings.applySettings(password, lockNewSettings);
+    dispatch(saveAdminSettings(password, lockNewSettings));
   }
 }
 
