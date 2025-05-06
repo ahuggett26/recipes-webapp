@@ -11,9 +11,9 @@ import {
 } from "../../utils/FormUtils";
 import { Link } from "react-router-dom";
 import { addIngredient } from "../../api/IngredientSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
-import { selectFirebaseService } from "../../api/FirebaseSlice";
+import { AppDispatch } from "../../api/Store";
 
 /**
  * A page for creating a new recipe.
@@ -22,7 +22,7 @@ import { selectFirebaseService } from "../../api/FirebaseSlice";
  * @returns A JSX element of the new recipe page.
  */
 function NewIngredientPage() {
-  const firebase = useSelector(selectFirebaseService);
+  const dispatch = useDispatch as AppDispatch;
   const isAuthenticated = useSelector(selectIsAdminAuthorized);
   return (
     <div className="w-75 min-h-75 mh-100">
@@ -125,8 +125,7 @@ function NewIngredientPage() {
         measurement: getFieldMeasurement("refMeasurement"),
       },
     };
-    firebase.createIngredient(output);
-    addIngredient(output);
+    dispatch(addIngredient(output));
   }
 }
 

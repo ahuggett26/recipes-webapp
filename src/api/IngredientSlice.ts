@@ -18,9 +18,6 @@ export const selectIngredients = (state: AppState) => {
 };
 
 /** Redux reducer function for initialising global state storage */
-export const addIngredient = (ingredient: IngredientInfo) => ingredientSlice.actions.addIngredient(ingredient);
-
-/** Redux reducer function for initialising global state storage */
 export const ingredientReducer = () => ingredientSlice.reducer;
 
 /**
@@ -42,6 +39,18 @@ const ingredientSlice = createSlice({
     },
   },
 });
+
+/**
+ * Adds an ingredient to the database.
+ * Also ensures the ingredient is added to local state, so refetching is not necessary.
+ */
+export const addIngredient =
+  (ingredient: IngredientInfo): AppThunk<void> =>
+  (dispatch, getState) => {
+    const firebaseService = getState().firebase.firebaseService;
+    firebaseService.createIngredient(ingredient);
+    dispatch(ingredientSlice.actions.addIngredient(ingredient));
+  };
 
 /**
  * Initial load of ingredients from Firebase

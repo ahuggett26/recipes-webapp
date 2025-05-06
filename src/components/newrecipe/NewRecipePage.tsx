@@ -7,8 +7,8 @@ import StepsInput from "./StepsInput";
 import { getFieldFloat, getFieldInt, getFieldMeasurement, getFieldString, isChecked } from "../../utils/FormUtils";
 import { addRecipe } from "../../api/RecipeSlice";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
-import { useSelector } from "react-redux";
-import { selectFirebaseService } from "../../api/FirebaseSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../api/Store";
 
 /**
  * A page for creating a new recipe.
@@ -17,7 +17,7 @@ import { selectFirebaseService } from "../../api/FirebaseSlice";
  * @returns A JSX element of the new recipe page.
  */
 function NewRecipePage() {
-  const firebase = useSelector(selectFirebaseService);
+  const dispatch = useDispatch as AppDispatch;
   const [steps, setSteps] = useState([""]);
   const [ingredients, setIngredients] = useState([0]);
   const [imgUrl, setImgUrl] = useState("");
@@ -80,8 +80,7 @@ function NewRecipePage() {
       secondaryIngredients,
       steps: steps.map((_, index) => getFieldString("steps-input-" + index)),
     };
-    firebase.createRecipe(output);
-    addRecipe(output);
+    dispatch(addRecipe(output));
   }
 
   /**
