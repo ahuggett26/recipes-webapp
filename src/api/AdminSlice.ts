@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sha256 } from "js-sha256";
 import { AppState, AppThunk } from "./Store";
+import { selectFirebaseService } from "./FirebaseSlice";
 
 // Define the TS type for the admin slice's state
 export interface AdminState {
@@ -47,7 +48,7 @@ const adminSlice = createSlice({
 export const attemptAdminAuth =
   (inputCode: string): AppThunk<Promise<void>> =>
   async (dispatch, getState) => {
-    const firebaseService = getState().firebase.firebaseService;
+    const firebaseService = selectFirebaseService(getState());
     const adminDocFetch = firebaseService.fetchAdminDoc();
     adminDocFetch.catch(() => dispatch(adminSlice.actions.setAdminAuthorized(false)));
 
@@ -60,7 +61,7 @@ export const attemptAdminAuth =
  * Initial state of if admin code is required from Firebase
  */
 export const fetchAdminRequired = (): AppThunk<void> => async (dispatch, getState) => {
-  const firebaseService = getState().firebase.firebaseService;
+  const firebaseService = selectFirebaseService(getState());
   const adminDocFetch = firebaseService.fetchAdminDoc();
   adminDocFetch.catch(() => dispatch(adminSlice.actions.setAdminCodeRequiredError()));
 
@@ -81,7 +82,7 @@ export const fetchAdminRequired = (): AppThunk<void> => async (dispatch, getStat
 export const saveAdminSettings =
   (code: string, lockNewRecipes: boolean): AppThunk<void> =>
   async (dispatch, getState) => {
-    const firebaseService = getState().firebase.firebaseService;
+    const firebaseService = selectFirebaseService(getState());
     firebaseService.saveAdminSettings({
       code: code === "" ? "" : sha256(code),
       lockNewRecipes,
