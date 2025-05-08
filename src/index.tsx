@@ -5,7 +5,7 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import Home from "./components/Home";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import NewRecipeButton from "./components/newrecipe/NewRecipeButton";
+import CreateNewButton from "./components/createnew/CreateNewButton";
 import NewRecipePage from "./components/newrecipe/NewRecipePage";
 import Root from "./components/Root";
 import HomeButton from "./components/HomeButton";
@@ -19,6 +19,7 @@ import IngredientList from "./components/ingredientlist/IngredientList";
 import { Provider as StoreProvider } from "react-redux";
 import { store } from "./api/Store";
 import AdminLoginPage from "./components/admin/AdminLoginPage";
+import CreateNewPage from "./components/createnew/CreateNewPage";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
         element: (
           <>
             <AdminButton />
-            <NewRecipeButton />
+            <CreateNewButton />
             <Home />
           </>
         ),
@@ -50,6 +51,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/create-new",
+        element: (
+          <>
+            <HomeButton />
+            <CreateNewPage />
+          </>
+        ),
+      },
+      {
+        path: "/create-recipe",
         element: (
           <>
             <HomeButton />
