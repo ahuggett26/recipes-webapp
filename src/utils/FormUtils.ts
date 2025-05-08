@@ -26,3 +26,9 @@ export function getFieldMeasurement(fieldId: string): Measurement {
 export function isChecked(fieldId: string): boolean {
   return (document.getElementById(fieldId) as HTMLInputElement).checked;
 }
+
+export function checkAndLock(fieldId: string, checkField: boolean) {
+  const field = document.getElementById(fieldId) as HTMLInputElement;
+  field.checked = checkField;
+  field.disabled = checkField;
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { measurementDatalist } from "../../model/Measurement";
 import IngredientInfo from "../../model/IngredientInfo";
 import {
+  checkAndLock,
   clearAllFields,
   getFieldFloat,
   getFieldInt,
@@ -71,11 +72,24 @@ function NewIngredientPage() {
       </div>
       <div className="pt-4 pb-2">
         <label htmlFor="veganCheckInput">Is Vegan</label>
-        <input id="veganCheckInput" className="form-check-input mx-3" type="checkbox" />
+        <input
+          id="veganCheckInput"
+          className="form-check-input mx-3"
+          type="checkbox"
+          onChange={(event) => {
+            checkAndLock("vegetarianCheckInput", event.target.checked);
+            checkAndLock("pescetarianCheckInput", event.target.checked);
+          }}
+        />
       </div>
       <div className="py-2">
         <label htmlFor="vegetarianCheckInput">Is Vegetarian</label>
-        <input id="vegetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
+        <input
+          id="vegetarianCheckInput"
+          className="form-check-input mx-3"
+          type="checkbox"
+          onChange={(event) => checkAndLock("pescetarianCheckInput", event.target.checked)}
+        />
       </div>
       <div className="py-2">
         <label htmlFor="pescetarianCheckInput">Is Pescetarian</label>
