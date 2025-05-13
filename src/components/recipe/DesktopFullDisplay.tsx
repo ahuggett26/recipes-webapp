@@ -72,8 +72,8 @@ export default function DesktopFullDisplay(props: Properties) {
       </span>
       <h3 className="mt-3">Ingredients:</h3>
       <ul className="px-4 centerList">
-        {props.recipe.mainIngredients.map((ing) => renderIngredient(ing, servings / props.recipe.servings))}
-        {props.recipe.secondaryIngredients?.map((ing) => renderIngredient(ing, servings / props.recipe.servings))}
+        {props.recipe.mainIngredients.map((ing) => renderIngredient(ing, servings / props.recipe.servings, true))}
+        {props.recipe.secondaryIngredients?.map((ing) => renderIngredient(ing, servings / props.recipe.servings, true))}
       </ul>
       <h3>Steps:</h3>
       <ol className="px-3 pb-5 centerList">

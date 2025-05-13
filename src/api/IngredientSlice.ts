@@ -18,6 +18,15 @@ export const selectIngredients = (state: AppState) => {
   return state.ingredients.ingredients ?? [];
 };
 
+/**
+ * @param state Redux app state.
+ * @param ingredient The name of the ingredient to find.
+ * @returns True if the given ingredient is in the ingredient database.
+ */
+export const selectIngredientExists = (state: AppState, ingredient: string) => {
+  return selectIngredients(state).find((ing) => ing.name.toLowerCase() === ingredient.toLowerCase()) != undefined;
+};
+
 /** Redux reducer function for initialising global state storage */
 export const ingredientReducer = () => ingredientSlice.reducer;
 
