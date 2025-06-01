@@ -58,7 +58,7 @@ export const renderIngredient = (ingredient: Ingredient, servingMultiplier?: num
       {formatMeasurement(ingredient, servingMultiplier)} {ingredient.name}
       {ingredient.qualifier ? <i>{` (${ingredient.qualifier})`}</i> : null}
       {!ingredientKnown && showWarnings ? (
-        <Link to="/create-ingredient" className="icon-link">
+        <Link to={`/create-ingredient?name=${ingredient.name.replaceAll(" ", "_")}`} className="icon-link">
           <i className="bi bi-exclamation-diamond-fill text-warning ps-2"></i>
         </Link>
       ) : null}

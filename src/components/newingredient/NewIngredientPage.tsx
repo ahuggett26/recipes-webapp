@@ -10,7 +10,7 @@ import {
   getFieldString,
   isChecked,
 } from "../../utils/FormUtils";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { addIngredient } from "../../api/IngredientSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
@@ -25,11 +25,17 @@ import { AppDispatch } from "../../api/Store";
 function NewIngredientPage() {
   const dispatch = useDispatch as AppDispatch;
   const isAuthenticated = useSelector(selectIsAdminAuthorized);
+  const [searchParams] = useSearchParams();
   return (
     <div className="w-75 min-h-75 mh-100">
       <h1 className="pt-2">Add New Ingredient</h1>
       <Link to="../ingredient-list">See all current ingredients</Link>
-      <input id="titleInput" className="form-control m-4" placeholder="Name" />
+      <input
+        id="titleInput"
+        className="form-control m-4"
+        placeholder="Name"
+        defaultValue={searchParams.get("name")?.replaceAll("_", " ") ?? undefined}
+      />
       <div className="row my-3 align-items-center">
         {measurementDatalist()}
         <span className="col-5 text-end">Reference:</span>
