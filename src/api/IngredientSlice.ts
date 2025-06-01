@@ -19,12 +19,24 @@ export const selectIngredients = (state: AppState) => {
 };
 
 /**
+ * Fetch a single ingredient by its name.
+ *
+ * @returns A single ingredient object. Undefined if it can't be found.
+ */
+export const selectIngredient = (state: AppState, name: string) => {
+  if (name === undefined || name === null || name.trim() === "") {
+    return undefined;
+  }
+  return selectIngredients(state).find((ing) => ing.name.toLowerCase() === name.toLowerCase());
+};
+
+/**
  * @param state Redux app state.
  * @param ingredient The name of the ingredient to find.
  * @returns True if the given ingredient is in the ingredient database.
  */
 export const selectIngredientExists = (state: AppState, ingredient: string) => {
-  return selectIngredients(state).find((ing) => ing.name.toLowerCase() === ingredient.toLowerCase()) != undefined;
+  return selectIngredient(state, ingredient) != undefined;
 };
 
 /** Redux reducer function for initialising global state storage */
