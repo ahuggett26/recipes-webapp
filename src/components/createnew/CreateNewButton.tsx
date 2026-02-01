@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
  *
  * @returns A JSX element for the new recipe button
  */
-function NewRecipeButton() {
+function CreateNewButton() {
   const navigate = useNavigate();
   return (
     <div className="position-absolute top-0 end-0 p-3">
@@ -17,4 +17,4 @@ function NewRecipeButton() {
   );
 }
 
-export default NewRecipeButton;
+export default CreateNewButton;

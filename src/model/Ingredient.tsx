@@ -1,5 +1,9 @@
 import React from "react";
 import { Measurement } from "./Measurement";
+import { useSelector } from "react-redux";
+import { selectIngredientExists } from "../api/IngredientSlice";
+import { AppState } from "../api/Store";
+import { Link } from "react-router-dom";
 
 /** Individual ingredient information in a recipe. */
 export interface Ingredient {
@@ -47,11 +51,17 @@ const formatMeasurement = (ing: Ingredient, servingMultiplier?: number) => {
  * @param servingMultiplier The servings multiplier to apply to the ingredient
  * @returns A JSX element of the ingredient
  */
-export const renderIngredient = (ingredient: Ingredient, servingMultiplier?: number) => {
+export const renderIngredient = (ingredient: Ingredient, servingMultiplier?: number, showWarnings?: boolean) => {
+  const ingredientKnown = useSelector((state: AppState) => selectIngredientExists(state, ingredient.name));
   return (
     <li key={`ing-${ingredient.name}`}>
       {formatMeasurement(ingredient, servingMultiplier)} {ingredient.name}
       {ingredient.qualifier ? <i>{` (${ingredient.qualifier})`}</i> : null}
+      {!ingredientKnown && showWarnings ? (
+        <Link to={`/create-ingredient?name=${ingredient.name.replaceAll(" ", "_")}`} className="icon-link">
+          <i className="bi bi-exclamation-diamond-fill text-warning ps-2"></i>
+        </Link>
+      ) : null}
     </li>
   );
 };

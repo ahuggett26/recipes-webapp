@@ -2,6 +2,7 @@ import React from "react";
 import { measurementDatalist } from "../../model/Measurement";
 import IngredientInfo from "../../model/IngredientInfo";
 import {
+  checkAndLock,
   clearAllFields,
   getFieldFloat,
   getFieldInt,
@@ -9,11 +10,11 @@ import {
   getFieldString,
   isChecked,
 } from "../../utils/FormUtils";
-import { Link } from "react-router-dom";
-import { addIngredient } from "../../api/IngredientSlice";
+import { Link, useSearchParams } from "react-router-dom";
+import { addIngredient, selectIngredient } from "../../api/IngredientSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsAdminAuthorized } from "../../api/AdminSlice";
-import { AppDispatch } from "../../api/Store";
+import { AppDispatch, AppState } from "../../api/Store";
 
 /**
  * A page for creating a new recipe.
@@ -24,15 +25,24 @@ import { AppDispatch } from "../../api/Store";
 function NewIngredientPage() {
   const dispatch = useDispatch as AppDispatch;
   const isAuthenticated = useSelector(selectIsAdminAuthorized);
+  const [searchParams] = useSearchParams();
+
+  const recipeName = searchParams.get("name")?.replaceAll("_", " ") ?? undefined;
+  const existingIngredient = useSelector((state: AppState) => selectIngredient(state, recipeName ?? ""));
   return (
     <div className="w-75 min-h-75 mh-100">
       <h1 className="pt-2">Add New Ingredient</h1>
       <Link to="../ingredient-list">See all current ingredients</Link>
-      <input id="titleInput" className="form-control m-4" placeholder="Name" />
+      <input
+        id="titleInput"
+        className="form-control m-4"
+        placeholder="Name"
+        defaultValue={recipeName}
+      />
       <div className="row my-3 align-items-center">
         {measurementDatalist()}
         <span className="col-5 text-end">Reference:</span>
-        <input id="refAmount" className="form-control text-center col" type="number" defaultValue={100} />
+        <input id="refAmount" className="form-control text-center col" type="number" defaultValue={existingIngredient?.reference.amount ?? 100} />
         <input
           id="refMeasurement"
           className="form-control text-center col"
@@ -71,11 +81,24 @@ function NewIngredientPage() {
       </div>
       <div className="pt-4 pb-2">
         <label htmlFor="veganCheckInput">Is Vegan</label>
-        <input id="veganCheckInput" className="form-check-input mx-3" type="checkbox" />
+        <input
+          id="veganCheckInput"
+          className="form-check-input mx-3"
+          type="checkbox"
+          onChange={(event) => {
+            checkAndLock("vegetarianCheckInput", event.target.checked);
+            checkAndLock("pescetarianCheckInput", event.target.checked);
+          }}
+        />
       </div>
       <div className="py-2">
         <label htmlFor="vegetarianCheckInput">Is Vegetarian</label>
-        <input id="vegetarianCheckInput" className="form-check-input mx-3" type="checkbox" />
+        <input
+          id="vegetarianCheckInput"
+          className="form-check-input mx-3"
+          type="checkbox"
+          onChange={(event) => checkAndLock("pescetarianCheckInput", event.target.checked)}
+        />
       </div>
       <div className="py-2">
         <label htmlFor="pescetarianCheckInput">Is Pescetarian</label>

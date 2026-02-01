@@ -18,6 +18,27 @@ export const selectIngredients = (state: AppState) => {
   return state.ingredients.ingredients ?? [];
 };
 
+/**
+ * Fetch a single ingredient by its name.
+ *
+ * @returns A single ingredient object. Undefined if it can't be found.
+ */
+export const selectIngredient = (state: AppState, name: string) => {
+  if (name === undefined || name === null || name.trim() === "") {
+    return undefined;
+  }
+  return selectIngredients(state).find((ing) => ing.name.toLowerCase() === name.toLowerCase());
+};
+
+/**
+ * @param state Redux app state.
+ * @param ingredient The name of the ingredient to find.
+ * @returns True if the given ingredient is in the ingredient database.
+ */
+export const selectIngredientExists = (state: AppState, ingredient: string) => {
+  return selectIngredient(state, ingredient) != undefined;
+};
+
 /** Redux reducer function for initialising global state storage */
 export const ingredientReducer = () => ingredientSlice.reducer;
 
@@ -34,9 +55,8 @@ const ingredientSlice = createSlice({
       state.ingredients = action.payload;
     },
     addIngredient: (state, action: PayloadAction<IngredientInfo>) => {
-      // Preferably, just insert in the right place
-      state.ingredients?.push(action.payload);
-      state.ingredients?.sort((a, b) => a.name.localeCompare(b.name));
+      const index = state.ingredients?.findIndex(ing => ing.name.localeCompare(action.payload.name) < 0);
+      state.ingredients?.splice(index ?? 0, 0, action.payload);
     },
   },
 });
@@ -59,6 +79,9 @@ export const fetchIngredients = (): AppThunk<void> => async (dispatch) => {
   const response = await fetchAllIngredients();
   const ingredients = response.docs.map((doc) => doc.data() as IngredientInfo);
   ingredients.sort((a, b) => a.name.localeCompare(b.name));
+  ingredients.forEach((ing) => {
+    ing.name = ing.name.replaceAll("_", " ");
+  });
 
   // The value we return becomes the `fulfilled` action payload
   dispatch(ingredientSlice.actions.setIngredients(ingredients));
