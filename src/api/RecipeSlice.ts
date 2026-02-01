@@ -56,7 +56,7 @@ export const selectRecipeByName = (state: AppState, name: string) => {
  */
 export const selectRecipesByNameIncludes = (state: AppState, nameIncludes: string) => {
   const query = nameIncludes.toLowerCase();
-  return state.recipes.recipes.filter((recipe) => recipe.name.includes(query));
+  return state.recipes.recipes.filter((recipe) => recipe.name.toLowerCase().includes(query));
 };
 
 /**
