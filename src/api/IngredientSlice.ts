@@ -55,9 +55,8 @@ const ingredientSlice = createSlice({
       state.ingredients = action.payload;
     },
     addIngredient: (state, action: PayloadAction<IngredientInfo>) => {
-      // Preferably, just insert in the right place
-      state.ingredients?.push(action.payload);
-      state.ingredients?.sort((a, b) => a.name.localeCompare(b.name));
+      const index = state.ingredients?.findIndex(ing => ing.name.localeCompare(action.payload.name) < 0);
+      state.ingredients?.splice(index ?? 0, 0, action.payload);
     },
   },
 });
@@ -80,6 +79,9 @@ export const fetchIngredients = (): AppThunk<void> => async (dispatch) => {
   const response = await fetchAllIngredients();
   const ingredients = response.docs.map((doc) => doc.data() as IngredientInfo);
   ingredients.sort((a, b) => a.name.localeCompare(b.name));
+  ingredients.forEach((ing) => {
+    ing.name = ing.name.replaceAll("_", " ");
+  });
 
   // The value we return becomes the `fulfilled` action payload
   dispatch(ingredientSlice.actions.setIngredients(ingredients));
